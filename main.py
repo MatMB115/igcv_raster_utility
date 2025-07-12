@@ -5,37 +5,37 @@ from controller.main_controller import MainController
 from logger import setup_logger
 
 def main():
-    # Configurar logging
+    # Setup logging
     logger = setup_logger()
-    logger.info("Iniciando aplicação IGCV Raster Utility")
+    logger.info("Starting IGCV Raster Utility application")
     
     try:
         if '--cli' in sys.argv:
-            logger.info("Executando modo CLI")
+            logger.info("Running CLI mode")
             argv = sys.argv[:]
             argv.remove('--cli')
             import cli.cli_app
             cli.cli_app.main(*argv)
         else:
-            logger.info("Executando modo GUI")
+            logger.info("Running GUI mode")
             app = QApplication(sys.argv)
-            main_window = MainWindow()  # Criar MainWindow sem controller
-            controller = MainController(main_window)  # Criar controller com referência à view
-            main_window.set_controller(controller)  # Conectar controller à view
+            main_window = MainWindow()
+            controller = MainController(main_window)
+            main_window.set_controller(controller)
             main_window.show()
-            logger.info("Interface gráfica iniciada com sucesso")
+            logger.info("Graphical interface started successfully")
             app.exec_()
     except ImportError as e:
-        logger.error(f"Erro de importação: {e}")
-        print(f"Erro de importação: {e}")
-        print("Verifique se todas as dependências estão instaladas: pip install -r requirements.txt")
+        logger.error(f"Import error: {e}")
+        print(f"Import error: {e}")
+        print("Check if all dependencies are installed: pip install -r requirements.txt")
         sys.exit(1)
     except Exception as e:
-        logger.error(f"Erro inesperado na aplicação: {e}", exc_info=True)
-        print(f"Erro inesperado na aplicação: {e}")
+        logger.error(f"Unexpected error in application: {e}", exc_info=True)
+        print(f"Unexpected error in application: {e}")
         sys.exit(1)
     finally:
-        logger.info("Aplicação finalizada")
+        logger.info("Application finished")
 
 if __name__ == "__main__":
     main()

@@ -108,7 +108,7 @@ output/
 temp/
 .DS_Store
 Thumbs.db
-
+*.qm
 # IDE
 .vscode/
 .idea/
