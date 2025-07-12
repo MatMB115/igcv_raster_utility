@@ -3,27 +3,70 @@
 A lightweight, user-friendly desktop application for processing, visualizing, and exporting satellite and similar multispectral raster datasets.
 This tool was designed to support scientific workflows and dataset distribution, enabling fast band selection, index calculation (NDVI, EVI, NDRE, etc.), and export to common formats (GeoTIFF, PNG) with customizable band stacks.
 
-## Features
+## ✅ Implemented Features
 
-* **Open and preview multispectral raster files** (GeoTIFF, Sentinel-2 tiles, etc.)
-* **Select bands of interest** for export (e.g., RGB, NIR, Red Edge, SWIR)
-* **Calculate spectral indices** such as NDVI, EVI, NDRE and add them to the export stack
-* **Export as RGB/PNG** (quicklook) or **GeoTIFF** with the chosen bands and indices
-* **Cross-platform GUI** (Windows, Linux, macOS) via PyQt5/PySide2
-* **Multi-language support** (Portuguese and English) with Qt translation system
-* **Designed for ease of use** in research, education, and dataset distribution
-* **Robust error handling** with comprehensive exception management
-* **Logging system** for debugging and monitoring
+### Core Functionality
+- [x] **Open and load multispectral raster files** (GeoTIFF format)
+- [x] **Select bands of interest** for export (multi-selection interface)
+- [x] **Export selected bands as GeoTIFF** with metadata preservation
+- [x] **Cross-platform GUI** (Windows, Linux, macOS) via PyQt5
+- [x] **Multi-language support** (Portuguese and English) with Qt translation system
+- [x] **Command-line interface (CLI)** for batch processing
+- [x] **Robust error handling** with comprehensive exception management
+- [x] **Logging system** for debugging and monitoring
+- [x] **Metadata preservation** (band names, tags, descriptions, CRS, transform, etc.)
+
+### Technical Features
+- [x] **MVC architecture** (Model-View-Controller pattern)
+- [x] **Custom exception classes** for different error types
+- [x] **File validation** and error recovery
+- [x] **Band name extraction** from various metadata sources
+- [x] **Geographic metadata preservation** (CRS, transform, nodata values)
+- [x] **Compression and tiling settings** preservation
+- [x] **Translation compilation system** with Qt tools
+
+## ❌ Missing Features (TODO)
+
+### Core Functionality
+- [ ] **Spectral indices calculation** (NDVI, EVI, NDRE, etc.)
+- [ ] **Export as RGB/PNG** (quicklook generation)
+- [ ] **Band preview/visualization** (matplotlib integration)
+- [ ] **Advanced band selection** (drag & drop, band reordering)
+- [ ] **Batch processing** for multiple files
+- [ ] **Progress indicators** for long operations
+
+### User Interface
+- [ ] **Band preview thumbnails** in the selection interface
+- [ ] **File format selection** for export (GeoTIFF, PNG, etc.)
+- [ ] **Export options dialog** (compression, quality settings)
+- [ ] **Recent files list** in menu
+- [ ] **Keyboard shortcuts** for common operations
+- [ ] **Status bar** with operation progress
+
+### Advanced Features
+- [ ] **Band statistics** display (min, max, mean, std)
+- [ ] **Histogram visualization** for selected bands
+- [ ] **Custom spectral indices** (user-defined formulas)
+- [ ] **Band combination presets** (RGB, false color, etc.)
+- [ ] **Metadata editor** for viewing/editing file metadata
+- [ ] **Coordinate system conversion** options
+
+### Documentation & Testing
+- [ ] **Unit tests** for core functionality
+- [ ] **Integration tests** for GUI and CLI
+- [ ] **User manual** with screenshots
+- [ ] **API documentation** for developers
+- [ ] **Example datasets** for testing
+- [ ] **Performance benchmarks**
 
 ## Getting Started
 
 ### Requirements
 
 * Python 3.8+
-* [PyQt5](https://pypi.org/project/PyQt5/) or [PySide2](https://pypi.org/project/PySide2/)
-* [rasterio](https://rasterio.readthedocs.io/)
-* [numpy](https://numpy.org/)
-* [matplotlib](https://matplotlib.org/) (for preview)
+* [PyQt5](https://pypi.org/project/PyQt5/) >= 5.15.0
+* [rasterio](https://rasterio.readthedocs.io/) >= 1.3.0
+* [numpy](https://numpy.org/) >= 1.21.0
 
 ### Installation
 
@@ -40,7 +83,7 @@ pip install -r requirements.txt
 
 3. Compile translations (optional):
 ```bash
-python compile_translations_simple.py
+python utils/compile_translations.py
 ```
 
 4. Run the application:
@@ -55,10 +98,10 @@ python main.py --cli --input input.tif --bands 1 2 3 --output output.tif
 ## Usage
 
 ### GUI Mode
-1. Open a raster file (GeoTIFF).
-2. Preview bands and select which to export.
-3. Optionally, calculate NDVI, EVI, NDRE and add them to your band stack.
-4. Export your selection as a new GeoTIFF or as an RGB PNG quicklook.
+1. Open a raster file (GeoTIFF) using the "Open Raster" button
+2. Preview available bands in the list (currently shows band names only)
+3. Select which bands to export (multi-selection supported)
+4. Export your selection as a new GeoTIFF with preserved metadata
 
 ### CLI Mode
 ```bash
@@ -101,7 +144,8 @@ igcv_raster_utility/
 ├── exceptions.py           # Custom exception classes
 ├── logger.py              # Logging configuration
 ├── requirements.txt       # Python dependencies
-├── compile_translations_simple.py # Translation compiler script
+├── utils/
+│   └── compile_translations.py # Translation compiler script
 ├── cli/
 │   └── cli_app.py        # Command-line interface
 ├── controller/
@@ -122,13 +166,41 @@ igcv_raster_utility/
 Most desktop GIS tools are too heavy or too generic for simple scientific or data publishing workflows.
 **IGCVRasterTool** is focused on speed, simplicity, and reproducibility for remote sensing, ML dataset creation, and educational projects.
 
-## Development
+## Development Roadmap
+
+### Phase 1: Core Features (Current)
+- [x] Basic raster loading and band selection
+- [x] GeoTIFF export with metadata preservation
+- [x] CLI and GUI interfaces
+- [x] Multi-language support
+- [x] Error handling and logging
+
+### Phase 2: Visualization & Indices (Next)
+- [ ] Band preview thumbnails
+- [ ] Spectral indices calculation (NDVI, EVI, NDRE)
+- [ ] RGB/PNG export for quicklooks
+- [ ] Basic statistics display
+
+### Phase 3: Advanced Features (Future)
+- [ ] Custom spectral indices
+- [ ] Batch processing
+- [ ] Advanced export options
+- [ ] Metadata editor
+
+### Phase 4: Polish & Documentation (Future)
+- [ ] Comprehensive testing
+- [ ] User documentation
+- [ ] Performance optimization
+- [ ] Additional export formats
+
+## Contributing
 
 ### Adding New Features
 1. Follow the MVC pattern
 2. Add appropriate exception handling
 3. Include logging for debugging
 4. Update documentation
+5. Add tests for new functionality
 
 ### Translations
 - The application supports multiple languages using Qt's translation system
@@ -147,4 +219,4 @@ Most desktop GIS tools are too heavy or too generic for simple scientific or dat
 
 ## Citation
 
-TODO
+TODO: Add citation information for academic use

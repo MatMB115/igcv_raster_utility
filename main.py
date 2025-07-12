@@ -5,7 +5,6 @@ from controller.main_controller import MainController
 from logger import setup_logger
 
 def main():
-    # Setup logging
     logger = setup_logger()
     logger.info("Starting IGCV Raster Utility application")
     
