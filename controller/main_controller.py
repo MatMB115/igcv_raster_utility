@@ -10,29 +10,29 @@ class MainController:
         self.meta = None
 
     def open_raster(self):
-        """Abre um arquivo raster e carrega suas informações"""
+        """Opens a raster file and loads its information"""
         try:
             filepath, _ = QFileDialog.getOpenFileName(
                 self.view, 
-                "Abrir arquivo raster", 
+                "Open raster file", 
                 "", 
-                "GeoTIFF (*.tif *.tiff);;Todos os arquivos (*)"
+                "GeoTIFF (*.tif *.tiff);;All files (*)"
             )
             
             if not filepath:
-                return  # Usuário cancelou a seleção
+                return  # User cancelled selection
             
-            # Carregar informações do raster
+            # Load raster information
             try:
                 self.meta, self.band_names = raster_handler.load_raster(filepath)
             except RasterHandlerError as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro ao carregar o raster:\n{str(e)}")
+                QMessageBox.critical(self.view, "Error", f"Error loading raster:\n{str(e)}")
                 return
             except Exception as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro inesperado ao carregar o raster:\n{str(e)}")
+                QMessageBox.critical(self.view, "Error", f"Unexpected error loading raster:\n{str(e)}")
                 return
             
-            # Atualizar interface
+            # Update interface
             self.raster_path = filepath
             self.view.band_list.clear()
             
@@ -42,62 +42,62 @@ class MainController:
                 self.view.band_list.addItem(item)
             
             self.view.export_button.setEnabled(True)
-            self.view.status_label.setText(f"Raster carregado: {filepath}")
+            self.view.status_label.setText(f"Raster loaded: {filepath}")
             
         except Exception as e:
-            QMessageBox.critical(self.view, "Erro", f"Erro inesperado ao abrir raster:\n{str(e)}")
+            QMessageBox.critical(self.view, "Error", f"Unexpected error opening raster:\n{str(e)}")
 
     def export_selected_bands(self):
-        """Exporta as bandas selecionadas para um novo arquivo"""
+        """Exports selected bands to a new file"""
         try:
-            # Verificar se há um raster carregado
+            # Check if there's a loaded raster
             if not self.raster_path:
-                QMessageBox.warning(self.view, "Aviso", "Nenhum raster foi carregado!")
+                QMessageBox.warning(self.view, "Warning", "No raster has been loaded!")
                 return
             
-            # Verificar se há bandas selecionadas
+            # Check if there are selected bands
             selected_items = self.view.band_list.selectedItems()
             if not selected_items:
-                QMessageBox.warning(self.view, "Aviso", "Selecione ao menos uma banda!")
+                QMessageBox.warning(self.view, "Warning", "Select at least one band!")
                 return
             
-            # Obter índices das bandas selecionadas
+            # Get indices of selected bands
             selected_indices = [self.view.band_list.row(item) for item in selected_items]
             
-            # Ler bandas selecionadas
+            # Read selected bands
             try:
-                bands, meta = raster_handler.read_selected_bands(self.raster_path, selected_indices)
+                bands, meta, selected_band_names, band_metadata, file_metadata = raster_handler.read_selected_bands(self.raster_path, selected_indices)
             except RasterHandlerError as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro ao ler as bandas selecionadas:\n{str(e)}")
+                QMessageBox.critical(self.view, "Error", f"Error reading selected bands:\n{str(e)}")
                 return
             except Exception as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro inesperado ao ler as bandas:\n{str(e)}")
+                QMessageBox.critical(self.view, "Error", f"Unexpected error reading bands:\n{str(e)}")
                 return
             
-            # Solicitar caminho de saída
+            # Request output path
             out_path, _ = QFileDialog.getSaveFileName(
                 self.view, 
-                "Salvar GeoTIFF", 
+                "Save GeoTIFF", 
                 "", 
                 "GeoTIFF (*.tif *.tiff)"
             )
             
             if not out_path:
-                self.view.status_label.setText("Exportação cancelada.")
+                self.view.status_label.setText("Export cancelled.")
                 return
             
-            # Exportar arquivo
+            # Export file
             try:
-                raster_handler.export_tif(out_path, bands, meta)
-                self.view.status_label.setText(f"Arquivo exportado: {out_path}")
-                QMessageBox.information(self.view, "Sucesso", f"Arquivo exportado com sucesso:\n{out_path}")
+                raster_handler.export_tif(out_path, bands, meta, selected_band_names, band_metadata, file_metadata)
+                self.view.status_label.setText(f"File exported: {out_path}")
+                QMessageBox.information(self.view, "Success", f"File exported successfully:\n{out_path}")
             except RasterHandlerError as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro ao exportar o arquivo:\n{str(e)}")
-                self.view.status_label.setText("Erro na exportação.")
+                QMessageBox.critical(self.view, "Error", f"Error exporting file:\n{str(e)}")
+                self.view.status_label.setText("Export error.")
             except Exception as e:
-                QMessageBox.critical(self.view, "Erro", f"Erro inesperado na exportação:\n{str(e)}")
-                self.view.status_label.setText("Erro na exportação.")
+                QMessageBox.critical(self.view, "Error", f"Unexpected error during export:\n{str(e)}")
+                self.view.status_label.setText("Export error.")
                 
         except Exception as e:
-            QMessageBox.critical(self.view, "Erro", f"Erro inesperado na exportação:\n{str(e)}")
-            self.view.status_label.setText("Erro na exportação.")
+            QMessageBox.critical(self.view, "Error", f"Unexpected error during export:\n{str(e)}")
+            self.view.status_label.setText("Export error.")

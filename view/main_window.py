@@ -36,13 +36,11 @@ class MainWindow(QMainWindow):
                 self.action_english.triggered.connect(lambda: self.switch_language('en'))
             except Exception as e:
                 print(f"Erro ao criar menu: {e}")
-                # Criar ações básicas se o menu falhar
                 self.action_portuguese = QAction(self.tr("Português"), self)
                 self.action_english = QAction(self.tr("English"), self)
                 self.action_portuguese.triggered.connect(lambda: self.switch_language('pt_BR'))
                 self.action_english.triggered.connect(lambda: self.switch_language('en'))
             
-            # Criar widgets da interface
             try:
                 self.open_button = QPushButton(self.tr("Abrir Raster"))
                 self.open_button.clicked.connect(self._open_raster)
@@ -57,7 +55,6 @@ class MainWindow(QMainWindow):
                 self.status_label = QLabel(self.tr("Selecione um raster GeoTIFF."))
                 self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-                # Layout
                 layout = QVBoxLayout()
                 layout.addWidget(self.open_button)
                 layout.addWidget(QLabel(self.tr("Bandas disponíveis:")))
@@ -114,7 +111,6 @@ class MainWindow(QMainWindow):
         self.open_button.setText(self.tr("Abrir Raster"))
         self.export_button.setText(self.tr("Exportar Selecionadas"))
         self.status_label.setText(self.tr("Selecione um raster GeoTIFF."))
-        # Atualizar label acima da lista
         layout = self.centralWidget().layout()
         if layout:
             label = layout.itemAt(1).widget()
@@ -165,7 +161,6 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         """Tratamento do evento de fechamento da janela"""
         try:
-            # Aqui você pode adicionar lógica de limpeza se necessário
             event.accept()
         except Exception as e:
             print(f"Erro ao fechar janela: {e}")
