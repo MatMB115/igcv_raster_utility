@@ -133,13 +133,68 @@ class MainController:
             # Get indices of selected bands
             selected_indices = [self.view.band_list.row(item) for item in selected_items]
             
-            # Generate preview
+            # Check for data issues before generating preview
+            issues = raster_handler.detect_data_issues(self.raster_path, selected_indices)
+            
+            if issues['has_issues']:
+                # Show warning with issues and offer corrections
+                warning_text = f"{self.view.tr('Problemas detectados nos dados:')}\n\n"
+                for issue in issues['issues']:
+                    warning_text += f"• {issue}\n"
+                
+                warning_text += f"\n{self.view.tr('Recomendações:')}\n"
+                for rec in issues['recommendations']:
+                    warning_text += f"• {rec}\n"
+                
+                warning_text += f"\n{self.view.tr('Para gerar o preview, serão aplicadas correções automáticas nos dados desta amostra (por exemplo, definição de NoData ou ajuste do tipo de dado).')}"
+                warning_text += "\n\n" + self.view.tr('Se você escolher "Sim", os dados corrigidos serão salvos como uma nova amostra e estarão disponíveis tanto para visualização quanto para exportação.')
+                warning_text += "\n" + self.view.tr('Se você escolher "Não", as correções serão feitas apenas para o preview e não afetarão os dados originais ou exportação.')
+                warning_text += f"\n\n{self.view.tr('Deseja aplicar e salvar as correções automáticas?')}"
+                
+                reply = QMessageBox.question(
+                    self.view, 
+                    self.view.tr("Problemas Detectados"), 
+                    warning_text
+                )
+                
+                if reply == QMessageBox.Yes:
+                    try:
+                        # Apply corrections
+                        corrected_path = raster_handler.apply_data_corrections(self.raster_path, selected_indices)
+                        
+                        # Generate preview with corrected file
+                        preview_array = raster_handler.generate_preview_image(corrected_path, selected_indices)
+                        self.view.update_preview_image(preview_array)
+                        self.view.status_label.setText(self.view.tr("Preview gerado com arquivo corrigido!"))
+                        
+                        # Show info about corrected file
+                        QMessageBox.information(
+                            self.view, 
+                            self.view.tr("Arquivo Corrigido"), 
+                            f"{self.view.tr('Arquivo corrigido salvo como:')}\n{corrected_path}"
+                        )
+                        return
+                        
+                    except Exception as e:
+                        QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro ao aplicar correções:')}\n{str(e)}")
+                        return
+            
+            # Generate preview normally
             try:
                 preview_array = raster_handler.generate_preview_image(self.raster_path, selected_indices)
                 self.view.update_preview_image(preview_array)
                 self.view.status_label.setText(self.view.tr("Preview gerado com sucesso!"))
             except RasterHandlerError as e:
-                QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro ao gerar preview:')}\n{str(e)}")
+                # Show debug information for preview errors
+                debug_stats = raster_handler.debug_band_statistics(self.raster_path, selected_indices)
+                debug_info = f"Erro: {str(e)}\n\nEstatísticas das bandas:\n"
+                for band_name, stats in debug_stats.items():
+                    if isinstance(stats, dict) and 'error' not in stats:
+                        debug_info += f"\n{band_name}:\n"
+                        for key, value in stats.items():
+                            debug_info += f"  {key}: {value}\n"
+                
+                QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro ao gerar preview:')}\n{debug_info}")
                 self.view.status_label.setText(self.view.tr("Erro no preview."))
             except Exception as e:
                 QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro inesperado ao gerar preview:')}\n{str(e)}")

@@ -277,33 +277,60 @@ def generate_preview_image(filepath, band_indices, max_size=500):
                 # Replace NoData with 0 for visualization
                 preview_array[mask] = 0
             
-            # Normalize each band to 0-255 range
+            # Normalize each band to 0-255 range with improved handling for float64 data
             normalized_preview = np.zeros_like(preview_array, dtype=np.uint8)
             
             for i in range(3):
                 band_data = preview_array[:, :, i]
+                
+                # Handle NaN and infinite values
+                band_data = np.nan_to_num(band_data, nan=0.0, posinf=0.0, neginf=0.0)
                 
                 # Skip if band is all zeros or all same value
                 if np.all(band_data == 0) or np.all(band_data == band_data.flat[0]):
                     normalized_preview[:, :, i] = 0
                     continue
                 
-                # Remove zeros for percentile calculation (if they're not meaningful data)
-                non_zero_data = band_data[band_data != 0]
-                if len(non_zero_data) > 0:
-                    # Use 2-98 percentile for better contrast
-                    p2, p98 = np.percentile(non_zero_data, (2, 98))
+                # For float64 data, use more robust normalization
+                if band_data.dtype == np.float64:
+                    # Remove outliers using more aggressive percentiles
+                    valid_data = band_data[np.isfinite(band_data) & (band_data != 0)]
                     
-                    # Avoid division by zero
-                    if p98 > p2:
-                        # Normalize to 0-255
-                        normalized = np.clip((band_data - p2) / (p98 - p2) * 255, 0, 255)
+                    if len(valid_data) > 0:
+                        # Use 1-99 percentile for better handling of extreme values
+                        p1, p99 = np.percentile(valid_data, (1, 99))
+                        
+                        # If percentiles are too close, use min/max
+                        if p99 - p1 < 1e-10:
+                            p1, p99 = np.min(valid_data), np.max(valid_data)
+                        
+                        # Avoid division by zero
+                        if p99 > p1:
+                            # Normalize to 0-255 with clipping
+                            normalized = np.clip((band_data - p1) / (p99 - p1) * 255, 0, 255)
+                        else:
+                            # If all values are the same, set to middle gray
+                            normalized = np.full_like(band_data, 128, dtype=np.uint8)
                     else:
-                        # If all values are the same, set to middle gray
-                        normalized = np.full_like(band_data, 128, dtype=np.uint8)
+                        # If no valid data, set to black
+                        normalized = np.zeros_like(band_data, dtype=np.uint8)
                 else:
-                    # If all values are zero, set to black
-                    normalized = np.zeros_like(band_data, dtype=np.uint8)
+                    # For other data types, use original logic
+                    non_zero_data = band_data[band_data != 0]
+                    if len(non_zero_data) > 0:
+                        # Use 2-98 percentile for better contrast
+                        p2, p98 = np.percentile(non_zero_data, (2, 98))
+                        
+                        # Avoid division by zero
+                        if p98 > p2:
+                            # Normalize to 0-255
+                            normalized = np.clip((band_data - p2) / (p98 - p2) * 255, 0, 255)
+                        else:
+                            # If all values are the same, set to middle gray
+                            normalized = np.full_like(band_data, 128, dtype=np.uint8)
+                    else:
+                        # If all values are zero, set to black
+                        normalized = np.zeros_like(band_data, dtype=np.uint8)
                 
                 normalized_preview[:, :, i] = normalized.astype(np.uint8)
             
@@ -318,6 +345,218 @@ def generate_preview_image(filepath, band_indices, max_size=500):
         raise
     except Exception as e:
         raise RasterHandlerError(f"Unexpected error generating preview: {e}")
+
+def detect_data_issues(filepath, band_indices):
+    """
+    Detect potential issues in raster data that might cause preview problems.
+    
+    Args:
+        filepath (str): Path to the raster file
+        band_indices (list): List of band indices (0-based) to analyze
+        
+    Returns:
+        dict: Issues detected and recommendations
+    """
+    try:
+        with rasterio.open(filepath) as src:
+            issues = {
+                'has_issues': False,
+                'issues': [],
+                'recommendations': [],
+                'band_details': {}
+            }
+            
+            total_pixels = src.width * src.height
+            
+            for i, band_idx in enumerate(band_indices):
+                band_data = src.read(band_idx + 1)
+                band_issues = []
+                band_recommendations = []
+                
+                # Check for NaN values
+                nan_count = np.sum(np.isnan(band_data))
+                if nan_count > 0:
+                    nan_percent = (nan_count / total_pixels) * 100
+                    band_issues.append(f"NaN values: {nan_count} pixels ({nan_percent:.2f}%)")
+                    band_recommendations.append("Convert NaN to NoData (-9999)")
+                
+                # Check for infinite values
+                inf_count = np.sum(np.isinf(band_data))
+                if inf_count > 0:
+                    inf_percent = (inf_count / total_pixels) * 100
+                    band_issues.append(f"Infinite values: {inf_count} pixels ({inf_percent:.2f}%)")
+                    band_recommendations.append("Convert infinite values to NoData (-9999)")
+                
+                # Check for extreme values in float64
+                if band_data.dtype == np.float64:
+                    valid_data = band_data[np.isfinite(band_data)]
+                    if len(valid_data) > 0:
+                        min_val = np.min(valid_data)
+                        max_val = np.max(valid_data)
+                        
+                        # Check for very large or very small values
+                        if abs(min_val) > 1e6 or abs(max_val) > 1e6:
+                            band_issues.append(f"Extreme values: min={min_val:.2e}, max={max_val:.2e}")
+                            band_recommendations.append("Consider data scaling or clipping")
+                        
+                        # Check for very small range (might cause preview issues)
+                        if max_val - min_val < 1e-10:
+                            band_issues.append("Very small data range - might cause preview issues")
+                            band_recommendations.append("Check if data needs scaling")
+                
+                # Check for NoData issues
+                nodata = src.nodata
+                if nodata is None:
+                    # Check if there are suspicious patterns that might indicate NoData
+                    zero_count = np.sum(band_data == 0)
+                    zero_percent = (zero_count / total_pixels) * 100
+                    
+                    if zero_percent > 50:  # More than 50% zeros
+                        band_issues.append(f"High zero count: {zero_count} pixels ({zero_percent:.2f}%) - might be NoData")
+                        band_recommendations.append("Consider setting NoData to 0")
+                
+                # Store band details
+                issues['band_details'][f'band_{band_idx + 1}'] = {
+                    'issues': band_issues,
+                    'recommendations': band_recommendations,
+                    'dtype': str(band_data.dtype),
+                    'shape': band_data.shape,
+                    'nan_count': int(nan_count),
+                    'inf_count': int(inf_count)
+                }
+                
+                # Add to overall issues
+                if band_issues:
+                    issues['has_issues'] = True
+                    issues['issues'].extend([f"Banda {band_idx + 1}: {issue}" for issue in band_issues])
+                    issues['recommendations'].extend(band_recommendations)
+            
+            # Remove duplicates from recommendations
+            issues['recommendations'] = list(set(issues['recommendations']))
+            
+            return issues
+            
+    except Exception as e:
+        return {
+            'has_issues': True,
+            'issues': [f"Error analyzing data: {str(e)}"],
+            'recommendations': ["Unable to analyze data issues"],
+            'band_details': {}
+        }
+
+def debug_band_statistics(filepath, band_indices):
+    """
+    Debug function to show statistics for selected bands.
+    
+    Args:
+        filepath (str): Path to the raster file
+        band_indices (list): List of band indices (0-based) to analyze
+        
+    Returns:
+        dict: Statistics for each band
+    """
+    try:
+        with rasterio.open(filepath) as src:
+            stats = {}
+            
+            for i, band_idx in enumerate(band_indices):
+                band_data = src.read(band_idx + 1)
+                
+                # Basic statistics
+                band_stats = {
+                    'min': float(np.min(band_data)),
+                    'max': float(np.max(band_data)),
+                    'mean': float(np.mean(band_data)),
+                    'std': float(np.std(band_data)),
+                    'dtype': str(band_data.dtype),
+                    'shape': band_data.shape,
+                    'nan_count': int(np.sum(np.isnan(band_data))),
+                    'inf_count': int(np.sum(np.isinf(band_data))),
+                    'zero_count': int(np.sum(band_data == 0)),
+                    'unique_values': int(len(np.unique(band_data)))
+                }
+                
+                # Percentiles
+                valid_data = band_data[np.isfinite(band_data)]
+                if len(valid_data) > 0:
+                    percentiles = np.percentile(valid_data, [1, 5, 25, 50, 75, 95, 99])
+                    band_stats.update({
+                        'p1': float(percentiles[0]),
+                        'p5': float(percentiles[1]),
+                        'p25': float(percentiles[2]),
+                        'p50': float(percentiles[3]),
+                        'p75': float(percentiles[4]),
+                        'p95': float(percentiles[5]),
+                        'p99': float(percentiles[6])
+                    })
+                
+                stats[f'band_{band_idx + 1}'] = band_stats
+            
+            return stats
+            
+    except Exception as e:
+        return {'error': str(e)}
+
+def apply_data_corrections(filepath, band_indices, output_path=None):
+    """
+    Apply automatic corrections to raster data to fix common issues.
+    
+    Args:
+        filepath (str): Path to the input raster file
+        band_indices (list): List of band indices (0-based) to process
+        output_path (str, optional): Output file path. If None, creates a temporary file.
+        
+    Returns:
+        str: Path to the corrected file
+        
+    Raises:
+        RasterHandlerError: If there's an error applying corrections
+    """
+    try:
+        if output_path is None:
+            # Create output path with "_corrected" suffix
+            base_path = os.path.splitext(filepath)[0]
+            output_path = f"{base_path}_corrected.tif"
+        
+        with rasterio.open(filepath) as src:
+            # Read all bands to preserve metadata
+            all_bands = []
+            for i in range(src.count):
+                band_data = src.read(i + 1)
+                all_bands.append(band_data)
+            
+            # Apply corrections to selected bands
+            for band_idx in band_indices:
+                if 0 <= band_idx < len(all_bands):
+                    band_data = all_bands[band_idx]
+                    
+                    # Convert NaN and infinite values to -9999
+                    band_data = np.nan_to_num(band_data, nan=-9999.0, posinf=-9999.0, neginf=-9999.0)
+                    
+                    # Update the band data
+                    all_bands[band_idx] = band_data
+            
+            # Prepare metadata for export
+            export_meta = src.meta.copy()
+            export_meta['nodata'] = -9999.0  # Set NoData value
+            
+            # Export corrected file
+            with rasterio.open(output_path, 'w', **export_meta) as dst:
+                for i, band in enumerate(all_bands, start=1):
+                    dst.write(band, i)
+                    
+                    # Preserve band names if available
+                    try:
+                        band_name = src.tags(i).get('name', f'Band {i}')
+                        dst.update_tags(i, name=band_name)
+                        dst.set_band_description(i, band_name)
+                    except Exception:
+                        pass
+            
+            return output_path
+            
+    except Exception as e:
+        raise RasterHandlerError(f"Error applying data corrections: {e}")
 
 def export_tif(out_path, bands, meta, band_names=None, band_metadata=None, file_metadata=None):
     """

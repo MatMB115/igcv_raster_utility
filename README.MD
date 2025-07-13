@@ -25,6 +25,8 @@ Esta ferramenta foi projetada para suportar workflows científicos e distribuiç
 - [x] **Preservação de metadados geográficos** (CRS, transform, valores nodata)
 - [x] **Configurações de compressão e tiling** preservadas
 - [x] **Sistema de compilação de traduções** com ferramentas Qt
+- [x] **Detecção automática de problemas** em dados raster (NaN, infinitos, valores extremos)
+- [x] **Correções automáticas** para problemas comuns de dados
 
 ## Funcionalidades Faltantes (TODO)
 
@@ -80,7 +82,35 @@ python main.py --cli --input input.tif --list
 python main.py --cli --input input.tif --bands 1 3 4 --output output.tif
 ```
 
-## Tratamento de Erros
+## Tratamento de Erros e Detecção de Problemas
+
+A aplicação inclui tratamento abrangente de erros e um sistema inteligente de detecção de problemas:
+
+### Sistema de Detecção de Problemas
+
+O IGCV Raster Utility detecta automaticamente problemas comuns em dados raster que podem causar falhas na visualização:
+
+#### Problemas Detectados:
+- **Valores NaN (Not a Number)**: Dados inválidos que podem causar erros de processamento
+- **Valores Infinitos**: Valores muito grandes ou muito pequenos que podem causar overflow
+- **Valores Extremos**: Dados float64 com valores muito grandes (>1e6) que podem causar problemas de normalização
+- **Faixa de Dados Muito Pequena**: Dados com variação mínima que podem resultar em previews cinza
+- **Alta Contagem de Zeros**: Padrões que podem indicar valores NoData não definidos
+
+#### Correções Automáticas:
+Quando problemas são detectados, a aplicação oferece correções automáticas:
+- **Conversão de NaN/Infinitos**: Converte valores inválidos para NoData (-9999)
+- **Definição de NoData**: Estabelece valor NoData apropriado quando não definido
+- **Geração de Arquivo Corrigido**: Cria uma versão corrigida do arquivo para preview
+
+#### Fluxo de Trabalho:
+1. **Detecção**: Ao gerar preview, a aplicação analisa automaticamente os dados selecionados
+2. **Aviso**: Se problemas são encontrados, um diálogo informa o usuário sobre os problemas detectados
+3. **Opção de Correção**: O usuário pode escolher aplicar correções automáticas
+4. **Arquivo Corrigido**: Uma versão corrigida é salva com sufixo "_corrected.tif"
+5. **Preview**: O preview é gerado usando o arquivo corrigido
+
+### Tratamento de Erros
 
 A aplicação inclui tratamento abrangente de erros:
 
@@ -184,6 +214,37 @@ A maioria das ferramentas GIS desktop são muito pesadas ou muito genéricas par
 - [ ] Otimização de performance
 - [ ] Formatos adicionais de exportação
 
+## Troubleshooting
+
+### Problemas Comuns e Soluções
+
+#### Preview Fica Cinza ou Preto
+**Causa**: Dados com valores extremos, NaN, infinitos ou faixa muito pequena
+**Solução**: 
+- A aplicação detectará automaticamente esses problemas
+- Aceite as correções automáticas oferecidas
+- Use o arquivo corrigido gerado
+
+#### Erro ao Gerar Preview
+**Causa**: Dados corrompidos ou incompatíveis
+**Solução**:
+- Verifique se o arquivo GeoTIFF está íntegro
+- Tente selecionar diferentes bandas
+- Use ferramentas externas para validar o arquivo
+
+#### Problemas com Dados Float64
+**Causa**: Valores muito grandes ou muito pequenos
+**Solução**:
+- O sistema detectará automaticamente valores extremos
+- Aplique as correções sugeridas
+- Considere reescalar os dados se necessário
+
+#### Arquivo Muito Grande
+**Causa**: Rasters com alta resolução podem ser lentos para processar
+**Solução**:
+- A aplicação faz downsampling automático para preview
+- Para exportação, considere usar ferramentas de recorte
+
 ## Contribuindo
 
 ### Adicionando Novas Funcionalidades
@@ -232,6 +293,8 @@ This tool was designed to support scientific workflows and dataset distribution,
 - [x] **Robust error handling** with comprehensive exception management
 - [x] **Logging system** for debugging and monitoring
 - [x] **Metadata preservation** (band names, tags, descriptions, CRS, transform, etc.)
+- [x] **Automatic problem detection** in raster data (NaN, infinities, extreme values)
+- [x] **Automatic corrections** for common data issues
 
 ### Technical Features
 - [x] **MVC architecture** (Model-View-Controller pattern)
@@ -296,7 +359,35 @@ python main.py --cli --input input.tif --list
 python main.py --cli --input input.tif --bands 1 3 4 --output output.tif
 ```
 
-## Error Handling
+## Error Handling and Problem Detection
+
+The application includes comprehensive error handling and an intelligent problem detection system:
+
+### Problem Detection System
+
+IGCV Raster Utility automatically detects common problems in raster data that can cause visualization failures:
+
+#### Detected Issues:
+- **NaN Values (Not a Number)**: Invalid data that can cause processing errors
+- **Infinite Values**: Very large or very small values that can cause overflow
+- **Extreme Values**: Float64 data with very large values (>1e6) that can cause normalization problems
+- **Very Small Data Range**: Data with minimal variation that can result in gray previews
+- **High Zero Count**: Patterns that may indicate undefined NoData values
+
+#### Automatic Corrections:
+When problems are detected, the application offers automatic corrections:
+- **NaN/Infinite Conversion**: Converts invalid values to NoData (-9999)
+- **NoData Definition**: Establishes appropriate NoData value when not defined
+- **Corrected File Generation**: Creates a corrected version of the file for preview
+
+#### Workflow:
+1. **Detection**: When generating preview, the application automatically analyzes selected data
+2. **Warning**: If problems are found, a dialog informs the user about detected issues
+3. **Correction Option**: User can choose to apply automatic corrections
+4. **Corrected File**: A corrected version is saved with "_corrected.tif" suffix
+5. **Preview**: Preview is generated using the corrected file
+
+### Error Handling
 
 The application includes comprehensive error handling:
 
@@ -399,6 +490,37 @@ Most desktop GIS tools are too heavy or too generic for simple scientific or dat
 - [ ] User documentation
 - [ ] Performance optimization
 - [ ] Additional export formats
+
+## Troubleshooting
+
+### Common Problems and Solutions
+
+#### Preview Appears Gray or Black
+**Cause**: Data with extreme values, NaN, infinities, or very small range
+**Solution**: 
+- The application will automatically detect these problems
+- Accept the offered automatic corrections
+- Use the generated corrected file
+
+#### Error Generating Preview
+**Cause**: Corrupted or incompatible data
+**Solution**:
+- Verify the GeoTIFF file is intact
+- Try selecting different bands
+- Use external tools to validate the file
+
+#### Problems with Float64 Data
+**Cause**: Very large or very small values
+**Solution**:
+- The system will automatically detect extreme values
+- Apply the suggested corrections
+- Consider rescaling the data if necessary
+
+#### Very Large File
+**Cause**: High-resolution rasters can be slow to process
+**Solution**:
+- The application automatically downsamples for preview
+- For export, consider using clipping tools
 
 ## Contributing
 

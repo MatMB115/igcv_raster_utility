@@ -288,6 +288,61 @@
         <source>Usando ordem reordenada das bandas.</source>
         <translation>Using reordered band order.</translation>
     </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="130"/>
+        <source>Problemas detectados nos dados:</source>
+        <translation>Data issues detected:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="135"/>
+        <source>Recomendações:</source>
+        <translation>Recommendations:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="138"/>
+        <source>Para gerar o preview, serão aplicadas correções automáticas nos dados desta amostra (por exemplo, definição de NoData ou ajuste do tipo de dado).</source>
+        <translation>To generate the preview, automatic corrections will be applied to the data in this sample (for example, NoData definition or data type adjustment).</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="139"/>
+        <source>Se você escolher "Sim", os dados corrigidos serão salvos como uma nova amostra e estarão disponíveis tanto para visualização quanto para exportação.</source>
+        <translation>If you choose "Yes", the corrected data will be saved as a new sample and will be available for both visualization and export.</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="140"/>
+        <source>Se você escolher "Não", as correções serão feitas apenas para o preview e não afetarão os dados originais ou exportação.</source>
+        <translation>If you choose "No", corrections will be made only for the preview and will not affect the original data or export.</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="142"/>
+        <source>Deseja aplicar e salvar as correções automáticas?</source>
+        <translation>Do you want to apply and save the automatic corrections?</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="141"/>
+        <source>Problemas Detectados</source>
+        <translation>Issues Detected</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="155"/>
+        <source>Preview gerado com arquivo corrigido!</source>
+        <translation>Preview generated with corrected file!</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="158"/>
+        <source>Arquivo Corrigido</source>
+        <translation>File Corrected</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="160"/>
+        <source>Arquivo corrigido salvo como:</source>
+        <translation>Corrected file saved as:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="164"/>
+        <source>Erro ao aplicar correções:</source>
+        <translation>Error applying corrections:</translation>
+    </message>
 </context>
 <context>
     <name>BandReorderWindow</name>
