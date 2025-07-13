@@ -57,7 +57,8 @@ igcv_raster_utility/
 ├── model/                 # Lógica de negócio (MVC)
 │   └── raster_handler.py
 ├── view/                  # Interface gráfica (MVC)
-│   └── main_window.py
+│   ├── main_window.py     # Janela principal
+│   └── band_reorder_window.py  # Janela de reordenação de bandas
 ├── utils/                 # Utilitários
 │   └── compile_translations.py
 ├── translations/          # Arquivos de tradução
@@ -77,7 +78,7 @@ igcv_raster_utility/
 #### 1. PEP 8 - Estilo de Código
 
 ```python
-# ✅ Bom
+# Bom
 def process_raster_data(file_path, band_indices):
     """Processa dados raster do arquivo especificado."""
     if not os.path.exists(file_path):
@@ -85,7 +86,7 @@ def process_raster_data(file_path, band_indices):
     
     return process_bands(file_path, band_indices)
 
-# ❌ Ruim
+# Ruim
 def processRasterData(filePath,bandIndices):
     if not os.path.exists(filePath):
         raise FileNotFoundError(f"Arquivo não encontrado: {filePath}")
@@ -142,7 +143,7 @@ def read_selected_bands(
 #### 1. Princípio da Responsabilidade Única (SRP)
 
 ```python
-# ✅ Bom - Cada classe tem uma responsabilidade
+# Bom - Cada classe tem uma responsabilidade
 class RasterLoader:
     """Responsável apenas por carregar dados raster."""
     
@@ -152,7 +153,7 @@ class MetadataExtractor:
 class BandProcessor:
     """Responsável apenas por processar bandas."""
 
-# ❌ Ruim - Classe com múltiplas responsabilidades
+# Ruim - Classe com múltiplas responsabilidades
 class RasterHandler:
     """Faz tudo: carrega, processa, exporta, etc."""
 ```
@@ -160,7 +161,7 @@ class RasterHandler:
 #### 2. Inversão de Dependência (DIP)
 
 ```python
-# ✅ Bom - Depende de abstrações
+# Bom - Depende de abstrações
 class RasterProcessor:
     def __init__(self, loader: RasterLoader, exporter: RasterExporter):
         self.loader = loader
@@ -171,7 +172,7 @@ class RasterProcessor:
         result = self.process_data(data)
         self.exporter.export(result)
 
-# ❌ Ruim - Depende de implementações concretas
+# Ruim - Depende de implementações concretas
 class RasterProcessor:
     def __init__(self):
         self.loader = RasterLoader()  # Dependência concreta
@@ -235,7 +236,7 @@ class FileOperationError(IGCVRasterError):
 #### 1. Exceções Específicas
 
 ```python
-# ✅ Bom - Exceção específica
+# Bom - Exceção específica
 def load_raster(filepath: str) -> Tuple[Dict, List[str]]:
     if not os.path.exists(filepath):
         raise FileOperationError(f"Arquivo não encontrado: {filepath}")
@@ -246,7 +247,7 @@ def load_raster(filepath: str) -> Tuple[Dict, List[str]]:
     except rasterio.RasterioIOError as e:
         raise RasterHandlerError(f"Erro ao abrir raster: {e}")
 
-# ❌ Ruim - Exceção genérica
+# Ruim - Exceção genérica
 def load_raster(filepath: str) -> Tuple[Dict, List[str]]:
     if not os.path.exists(filepath):
         raise Exception(f"Arquivo não encontrado: {filepath}")
@@ -258,13 +259,13 @@ def load_raster(filepath: str) -> Tuple[Dict, List[str]]:
 #### 2. Context Managers
 
 ```python
-# ✅ Bom - Uso de context managers
+# Bom - Uso de context managers
 def process_raster(filepath: str) -> np.ndarray:
     with rasterio.open(filepath) as src:
         data = src.read(1)
         return process_data(data)
 
-# ❌ Ruim - Gerenciamento manual
+# Ruim - Gerenciamento manual
 def process_raster(filepath: str) -> np.ndarray:
     src = rasterio.open(filepath)
     try:
@@ -462,12 +463,12 @@ result = profile_function(load_raster, "large_file.tif")
 #### 1. Leitura Eficiente
 
 ```python
-# ✅ Bom - Leitura seletiva
+# Bom - Leitura seletiva
 def read_bands_efficient(filepath: str, indices: List[int]) -> List[np.ndarray]:
     with rasterio.open(filepath) as src:
         return [src.read(i + 1) for i in indices]
 
-# ❌ Ruim - Leitura de todas as bandas
+# Ruim - Leitura de todas as bandas
 def read_bands_inefficient(filepath: str, indices: List[int]) -> List[np.ndarray]:
     with rasterio.open(filepath) as src:
         all_bands = src.read()  # Carrega todas as bandas

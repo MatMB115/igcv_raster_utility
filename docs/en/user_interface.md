@@ -1,62 +1,63 @@
-# Interfaces de Usuário - IGCV Raster Utility
+# User Interfaces - IGCV Raster Utility
 
-## Visão Geral
+## Overview
 
-O IGCV Raster Utility oferece duas interfaces de usuário distintas para atender diferentes necessidades de uso:
+The IGCV Raster Utility offers two distinct user interfaces to meet different usage needs:
 
-1. **Interface Gráfica (GUI)**: Interface visual intuitiva para uso interativo
-2. **Interface de Linha de Comando (CLI)**: Interface textual para processamento em lote e automação
+1. **Graphical Interface (GUI)**: Intuitive visual interface for interactive use
+2. **Command Line Interface (CLI)**: Textual interface for batch processing and automation
 
-## Interface Gráfica (GUI)
+## Graphical Interface (GUI)
 
-### Arquitetura da GUI
+### GUI Architecture
 
-A interface gráfica é construída usando PyQt5 e segue o padrão MVC, onde a View (`main_window.py`) é responsável pela apresentação e interação com o usuário.
+The graphical interface is built using PyQt5 and follows the MVC pattern, where the View (`main_window.py`) is responsible for presentation and user interaction.
 
-#### Componentes Principais
+#### Main Components
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    IGCV Raster Tool - MVP                       │
 ├─────────────────────────────────────────────────────────────────┤
-│  Idioma ▼                                                       │
+│  Language ▼                                                     │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
 │  ┌───────────────────────┐  ┌─────────────────────────────────┐ │
-│  │   PAINEL ESQUERDO     │  │        PAINEL DIREITO           │ │
+│  │   LEFT PANEL          │  │        RIGHT PANEL              │ │
 │  │                       │  │                                 │ │
-│  │ [Abrir Raster]        │  │  Metadados do Raster            │ │
+│  │ [Open Raster]         │  │  Raster Metadata                │ │
 │  │                       │  │ ┌─────────────────────────────┐ │ │
-│  │ Bandas disponíveis:   │  │ │                             │ │ │
-│  │    Band 1             │  │ │  [Informações detalhadas]   │ │ │
+│  │ Available bands:      │  │ │                             │ │ │
+│  │    Band 1             │  │ │  [Detailed Information]     │ │ │
 │  │    Band 2             │  │ │                             │ │ │
 │  │    Band 3             │  │ │                             │ │ │
 │  │    Band 4             │  │ └─────────────────────────────┘ │ │
 │  │                       │  │                                 │ │
 │  │   Preview             │  │                                 │ │
-│  │   [Gerar Preview]     │  │                                 │ │
+│  │   [Generate Preview]  │  │                                 │ │
 │  │ ┌─────────────────┐   │  │                                 │ │
 │  │ │                 │   │  │                                 │ │
 │  │ │   [Preview]     │   │  │                                 │ │
 │  │ │                 │   │  │                                 │ │
 │  │ └─────────────────┘   │  │                                 │ │
 │  │                       │  │                                 │ │
-│  │ [Exportar Selecionadas]  │                                 │ │
+│  │ [Reorder]             │  │                                 │ │
+│  │ [Export Selected]     │  │                                 │ │
 │  │                       │  │                                 │ │
 │  │ Status: ...           │  │                                 │ │
 │  └───────────────────────┘  └─────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Funcionalidades da GUI
+### GUI Features
 
-#### 1. Carregamento de Arquivos
+#### 1. File Loading
 
-**Botão "Abrir Raster"**
-- Abre diálogo de seleção de arquivos
-- Filtra apenas arquivos GeoTIFF (.tif, .tiff)
-- Valida arquivo antes do carregamento
-- Exibe erro se arquivo for inválido
+**"Open Raster" Button**
+- Opens file selection dialog
+- Filters only GeoTIFF files (.tif, .tiff)
+- Validates file before loading
+- Displays error if file is invalid
 
 ```python
 def open_raster(self):
@@ -68,13 +69,13 @@ def open_raster(self):
     )
 ```
 
-#### 2. Seleção de Bandas
+#### 2. Band Selection
 
-**Lista de Bandas**
-- Exibe todas as bandas disponíveis no arquivo
-- Suporte a seleção múltipla (Ctrl+Click)
-- Mostra nomes das bandas extraídos dos metadados
-- Fallback para "Band X" se nome não estiver disponível
+**Band List**
+- Displays all available bands in the file
+- Supports multiple selection (Ctrl+Click)
+- Shows band names extracted from metadata
+- Fallback to "Band X" if name not available
 
 ```python
 self.band_list = QListWidget()
@@ -82,24 +83,62 @@ self.band_list.setSelectionMode(QListWidget.MultiSelection)
 
 for name in self.band_names:
     item = QListWidgetItem(name)
-    item.setSelected(True)  # Seleção padrão
+    item.setSelected(True)  # Default selection
     self.band_list.addItem(item)
 ```
 
-#### 3. Preview de Imagem
+#### 3. Band Reordering
 
-**Área de Preview**
-- Gera visualização RGB das bandas selecionadas
-- Suporte a 1-3 bandas para preview
-- Downsampling automático para performance
-- Normalização de valores para melhor visualização
+**"Reorder" Button**
+- Allows reordering selected bands before export
+- Opens dedicated reordering window
+- Supports drag & drop for visual reordering
+- Buttons to move bands up/down
+- Option to reset to original order
+- Confirmation of new order
+
+```python
+def open_reorder_window(self):
+    selected_items = self.view.band_list.selectedItems()
+    if not selected_items:
+        QMessageBox.warning(self.view, "Warning", 
+                          "Select at least one band!")
+        return
+    
+    selected_indices = [self.view.band_list.row(item) 
+                       for item in selected_items]
+    
+    reorder_window = BandReorderWindow(
+        parent=self.view,
+        selected_bands=selected_indices,
+        band_names=self.band_names
+    )
+    
+    reorder_window.bands_reordered.connect(self._on_bands_reordered)
+    reorder_window.exec_()
+```
+
+**Reordering Window**
+- Intuitive interface with draggable list
+- Visualization of current band order
+- Action buttons for moving bands
+- Confirmation or cancellation of operation
+- Order preservation in export
+
+#### 4. Image Preview
+
+**Preview Area**
+- Generates RGB visualization of selected bands
+- Supports 1-3 bands for preview
+- Automatic downsampling for performance
+- Value normalization for better visualization
 
 ```python
 def generate_preview(self):
     selected_items = self.view.band_list.selectedItems()
     if len(selected_items) < 1 or len(selected_items) > 3:
-        QMessageBox.warning(self.view, "Aviso", 
-                          "Selecione 1 a 3 bandas para preview!")
+        QMessageBox.warning(self.view, "Warning", 
+                          "Select 1 to 3 bands for preview!")
         return
     
     selected_indices = [self.view.band_list.row(item) 
@@ -109,87 +148,88 @@ def generate_preview(self):
     self.view.update_preview_image(preview_array)
 ```
 
-#### 4. Visualização de Metadados
+#### 5. Metadata Visualization
 
-**Painel de Metadados**
-- Exibe informações detalhadas do arquivo raster
-- Organizado em seções lógicas
-- Informações geográficas e técnicas
-- Atualização automática ao carregar arquivo
+**Metadata Panel**
+- Displays detailed file raster information
+- Organized in logical sections
+- Geographic and technical information
+- Automatic update when loading file
 
 ```python
 def update_metadata_display(self, meta, band_names):
     metadata_text = []
     
-    # Informações básicas
-    metadata_text.append("[FILE] Informações Básicas")
-    metadata_text.append(f"   Dimensões: {meta.get('width')} x {meta.get('height')}")
-    metadata_text.append(f"   Número de bandas: {meta.get('count')}")
-    metadata_text.append(f"   Tipo de dados: {meta.get('dtype')}")
+    # Basic information
+    metadata_text.append("[FILE] Basic Information")
+    metadata_text.append(f"   Dimensions: {meta.get('width')} x {meta.get('height')}")
+    metadata_text.append(f"   Number of bands: {meta.get('count')}")
+    metadata_text.append(f"   Data type: {meta.get('dtype')}")
     
-    # Sistema de coordenadas
-    metadata_text.append("[CRS] Sistema de Coordenadas")
+    # Coordinate system
+    metadata_text.append("[CRS] Coordinate System")
     crs = meta.get('crs', None)
     if crs:
         metadata_text.append(f"   CRS: {crs}")
     
-    # Bandas
-    metadata_text.append("[BANDS] Bandas Disponíveis")
+    # Bands
+    metadata_text.append("[BANDS] Available Bands")
     for i, name in enumerate(band_names, 1):
         metadata_text.append(f"   {i}: {name}")
     
     self.metadata_text.setPlainText('\n'.join(metadata_text))
 ```
 
-#### 5. Exportação de Dados
+#### 6. Data Export
 
-**Botão "Exportar Selecionadas"**
-- Valida seleção de bandas
-- Abre diálogo de salvamento
-- Preserva metadados durante exportação
-- Feedback de progresso e resultado
+**"Export Selected" Button**
+- Validates band selection
+- Uses reordered order if available
+- Opens save dialog
+- Preserves metadata during export
+- Progress and result feedback
 
 ```python
 def export_selected_bands(self):
     selected_items = self.view.band_list.selectedItems()
     if not selected_items:
-        QMessageBox.warning(self.view, "Aviso", 
-                          "Selecione pelo menos uma banda!")
+        QMessageBox.warning(self.view, "Warning", 
+                          "Select at least one band!")
         return
     
     selected_indices = [self.view.band_list.row(item) 
                        for item in selected_items]
     
-    # Solicita caminho de saída
+    # Request output path
     out_path, _ = QFileDialog.getSaveFileName(
         self.view, "Save GeoTIFF", "", "GeoTIFF (*.tif *.tiff)")
     
     if out_path:
-        # Processa exportação
+        # Process export
         bands, meta, names, band_meta, file_meta = \
             raster_handler.read_selected_bands(self.raster_path, selected_indices)
-        raster_handler.export_tif(out_path, bands, meta, names, 
+        raster_handler.export_tif(out_path, bands, meta, 
                                  band_meta, file_meta)
         
-        QMessageBox.information(self.view, "Sucesso", 
-                              f"Arquivo exportado: {out_path}")
+        QMessageBox.information(self.view, "Success", 
+                              f"File exported: {out_path}")
 ```
 
-### Sistema de Tradução
+### Translation System
 
-#### Arquitetura de Tradução
+#### Translation Architecture
 
-A GUI suporta múltiplos idiomas usando o sistema de tradução do Qt:
+The GUI supports multiple languages using Qt's translation system:
 
 ```python
 class MainWindow(QMainWindow):
     def __init__(self):
         self.translator = QTranslator()
-        self.current_language = 'pt_BR'  # idioma padrão
+        self.current_language = 'pt_BR'  # default language
         self._load_language(self.current_language)
 ```
 
-#### Carregamento de Traduções
+#### Translation Loading
 
 ```python
 def _load_language(self, lang_code):
@@ -205,84 +245,84 @@ def _load_language(self, lang_code):
         QCoreApplication.instance().installTranslator(self.translator)
 ```
 
-#### Troca de Idioma
+#### Language Switching
 
 ```python
 def switch_language(self, lang_code):
     self._load_language(lang_code)
     self.current_language = lang_code
-    self._retranslate_ui()  # Atualiza todos os textos
+    self._retranslate_ui()  # Updates all texts
 ```
 
-#### Uso de Traduções
+#### Translation Usage
 
 ```python
-# Textos traduzíveis
+# Translatable texts
 self.setWindowTitle(self.tr("IGCV Raster Tool - MVP"))
-self.open_button.setText(self.tr("Abrir Raster"))
-self.export_button.setText(self.tr("Exportar Selecionadas"))
+self.open_button.setText(self.tr("Open Raster"))
+self.export_button.setText(self.tr("Export Selected"))
 ```
 
-### Tratamento de Erros na GUI
+### GUI Error Handling
 
-#### Estratégias de Tratamento
+#### Handling Strategies
 
-1. **Validação Preventiva**
+1. **Preventive Validation**
    ```python
    if not self.raster_path:
-       QMessageBox.warning(self.view, self.view.tr("Aviso"), 
-                          self.view.tr("Nenhum raster foi carregado!"))
+       QMessageBox.warning(self.view, self.view.tr("Warning"), 
+                          self.view.tr("No raster loaded!"))
        return
    ```
 
-2. **Mensagens de Erro Amigáveis**
+2. **User-Friendly Error Messages**
    ```python
    try:
        self.meta, self.band_names = raster_handler.load_raster(filepath)
    except RasterHandlerError as e:
-       QMessageBox.critical(self.view, self.view.tr("Erro"), 
-                          f"{self.view.tr('Erro ao carregar raster:')}\n{str(e)}")
+       QMessageBox.critical(self.view, self.view.tr("Error"), 
+                          f"{self.view.tr('Error loading raster:')}\n{str(e)}")
        return
    ```
 
-3. **Feedback de Status**
+3. **Status Feedback**
    ```python
-   self.view.status_label.setText(self.view.tr(f"Raster carregado: {filepath}"))
+   self.view.status_label.setText(self.view.tr(f"Raster loaded: {filepath}"))
    ```
 
-## Interface de Linha de Comando (CLI)
+## Command Line Interface (CLI)
 
-### Arquitetura da CLI
+### CLI Architecture
 
-A CLI é implementada no módulo `cli/cli_app.py` e utiliza o módulo `argparse` para parsing de argumentos.
+The CLI is implemented in the `cli/cli_app.py` module and uses the `argparse` module for argument parsing.
 
-#### Estrutura de Comandos
+#### Command Structure
 
 ```bash
-python main.py --cli [opções]
+python main.py --cli [options]
 ```
 
-### Argumentos Disponíveis
+### Available Arguments
 
-#### Argumentos Obrigatórios
+#### Required Arguments
 
-- `--input, -i`: Caminho do arquivo GeoTIFF de entrada
+- `--input, -i`: Input GeoTIFF file path
 
-#### Argumentos Opcionais
+#### Optional Arguments
 
-- `--bands, -b`: Lista de bandas para exportar (1-based)
-- `--output, -o`: Caminho do arquivo de saída
-- `--list`: Apenas lista as bandas disponíveis
+- `--bands, -b`: List of bands to export (1-based)
+- `--output, -o`: Output file path
+- `--list`: Only list available bands
 
-### Exemplos de Uso
+### Usage Examples
 
-#### 1. Listar Bandas Disponíveis
+#### 1. List Available Bands
 
 ```bash
 python main.py --cli --input image.tif --list
 ```
 
-**Saída:**
+**Output:**
 ```
 File: image.tif
 Available bands:
@@ -294,13 +334,13 @@ Available bands:
 Use --bands to choose bands and --output to export.
 ```
 
-#### 2. Exportar Bandas Específicas
+#### 2. Export Specific Bands
 
 ```bash
 python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 ```
 
-**Saída:**
+**Output:**
 ```
 File: image.tif
 Available bands:
@@ -312,15 +352,15 @@ Available bands:
 File exported successfully: output.tif
 ```
 
-#### 3. Apenas Listar Sem Exportar
+#### 3. List Only Without Export
 
 ```bash
 python main.py --cli --input image.tif
 ```
 
-### Implementação da CLI
+### CLI Implementation
 
-#### Parsing de Argumentos
+#### Argument Parsing
 
 ```python
 def main(argv=None):
@@ -339,23 +379,23 @@ def main(argv=None):
     args = parser.parse_args(argv)
 ```
 
-#### Validação de Entrada
+#### Input Validation
 
 ```python
-# Validação de arquivo de entrada
+# Input file validation
 if not os.path.exists(args.input):
     raise FileOperationError(f"Input file not found: {args.input}")
 
 if not os.path.isfile(args.input):
     raise FileOperationError(f"The specified path is not a file: {args.input}")
 
-# Validação de bandas selecionadas
-selected_indices = [b-1 for b in args.bands]  # conversão para 0-based
+# Selected bands validation
+selected_indices = [b-1 for b in args.bands]  # conversion to 0-based
 for b in selected_indices:
     if b < 0 or b >= len(band_names):
         raise ValidationError(f"Invalid band: {b+1}. Valid bands: 1-{len(band_names)}")
 
-# Validação de arquivo de saída
+# Output file validation
 if not args.output:
     raise ValidationError("Please specify output file with --output")
 
@@ -364,19 +404,19 @@ if output_dir and not os.path.exists(output_dir):
     raise FileOperationError(f"Output directory does not exist: {output_dir}")
 ```
 
-#### Processamento de Dados
+#### Data Processing
 
 ```python
-# Carregamento de informações
+# Load information
 meta, band_names = raster_handler.load_raster(args.input)
 
-# Exibição de informações
+# Display information
 print(f"File: {args.input}")
 print("Available bands:")
 for idx, name in enumerate(band_names):
     print(f"{idx+1}: {name}")
 
-# Processamento se bandas foram especificadas
+# Process if bands were specified
 if args.bands:
     bands, meta, selected_band_names, band_metadata, file_metadata = \
         raster_handler.read_selected_bands(args.input, selected_indices)
@@ -386,19 +426,19 @@ if args.bands:
     print(f"File exported successfully: {args.output}")
 ```
 
-### Tratamento de Erros na CLI
+### CLI Error Handling
 
-#### Hierarquia de Exceções
+#### Exception Hierarchy
 
 ```python
 try:
-    # Operações principais
+    # Main operations
     pass
 except KeyboardInterrupt:
     print("\nOperation cancelled by user.")
     sys.exit(0)
 except SystemExit:
-    raise  # Mantém códigos de saída corretos
+    raise  # Maintains correct exit codes
 except (CLIError, ValidationError, FileOperationError, RasterHandlerError) as e:
     print(f"Error: {e}")
     sys.exit(1)
@@ -407,113 +447,113 @@ except Exception as e:
     sys.exit(1)
 ```
 
-#### Códigos de Saída
+#### Exit Codes
 
-- **0**: Sucesso
-- **1**: Erro de validação ou processamento
-- **2**: Erro inesperado
+- **0**: Success
+- **1**: Validation or processing error
+- **2**: Unexpected error
 
-## Comparação entre GUI e CLI
+## GUI vs CLI Comparison
 
-### GUI - Vantagens
+### GUI - Advantages
 
-1. **Usabilidade**
-   - Interface intuitiva e visual
-   - Feedback imediato
-   - Preview de dados
-   - Seleção visual de bandas
+1. **Usability**
+   - Intuitive and visual interface
+   - Immediate feedback
+   - Data preview
+   - Visual band selection
 
-2. **Funcionalidades**
-   - Visualização de metadados
-   - Preview de imagens
-   - Suporte multilíngue
-   - Tratamento de erros amigável
+2. **Features**
+   - Metadata visualization
+   - Image preview
+   - Multilingual support
+   - User-friendly error handling
 
-3. **Casos de Uso**
-   - Uso interativo
-   - Exploração de dados
-   - Processamento ocasional
-   - Usuários não técnicos
+3. **Use Cases**
+   - Interactive use
+   - Data exploration
+   - Occasional processing
+   - Non-technical users
 
-### CLI - Vantagens
+### CLI - Advantages
 
-1. **Automação**
-   - Processamento em lote
-   - Integração com scripts
-   - Automação de workflows
-   - Processamento não supervisionado
+1. **Automation**
+   - Batch processing
+   - Script integration
+   - Workflow automation
+   - Unsupervised processing
 
 2. **Performance**
-   - Sem overhead de interface gráfica
-   - Menor uso de memória
-   - Execução mais rápida
-   - Ideal para servidores
+   - No GUI overhead
+   - Lower memory usage
+   - Faster execution
+   - Ideal for servers
 
-3. **Casos de Uso**
-   - Processamento em lote
-   - Automação de pipelines
-   - Uso em servidores
-   - Usuários técnicos
+3. **Use Cases**
+   - Batch processing
+   - Pipeline automation
+   - Server usage
+   - Technical users
 
-### Escolha da Interface
+### Interface Choice
 
-#### Use GUI quando:
-- Trabalhando com poucos arquivos
-- Precisa explorar dados
-- Usuário não é técnico
-- Precisa de preview visual
+#### Use GUI when:
+- Working with few files
+- Need to explore data
+- User is not technical
+- Need visual preview
 
-#### Use CLI quando:
-- Processando muitos arquivos
-- Automatizando workflows
-- Executando em servidor
-- Integrando com outros scripts
+#### Use CLI when:
+- Processing many files
+- Automating workflows
+- Running on server
+- Integrating with other scripts
 
-## Considerações de Usabilidade
+## Usability Considerations
 
-### Princípios de Design
+### Design Principles
 
-1. **Simplicidade**
-   - Interface limpa e focada
-   - Fluxo de trabalho intuitivo
-   - Menos é mais
+1. **Simplicity**
+   - Clean and focused interface
+   - Intuitive workflow
+   - Less is more
 
 2. **Feedback**
-   - Status claro das operações
-   - Mensagens de erro úteis
-   - Confirmação de ações importantes
+   - Clear operation status
+   - Useful error messages
+   - Important action confirmation
 
-3. **Consistência**
-   - Padrões consistentes de interface
-   - Comportamento previsível
-   - Terminologia uniforme
+3. **Consistency**
+   - Consistent interface patterns
+   - Predictable behavior
+   - Uniform terminology
 
-4. **Acessibilidade**
-   - Suporte a múltiplos idiomas
-   - Atalhos de teclado
-   - Interface responsiva
+4. **Accessibility**
+   - Multilingual support
+   - Keyboard shortcuts
+   - Responsive interface
 
-### Melhorias Futuras
+### Future Improvements
 
 #### GUI
-- [ ] Thumbnails de bandas
-- [ ] Drag & drop de arquivos
-- [ ] Barra de progresso
-- [ ] Atalhos de teclado
-- [ ] Histórico de arquivos recentes
+- [ ] Band thumbnails
+- [ ] File drag & drop
+- [ ] Progress bar
+- [ ] Keyboard shortcuts
+- [ ] Recent files history
 
 #### CLI
-- [ ] Processamento em paralelo
-- [ ] Opções de configuração avançadas
-- [ ] Logging detalhado
-- [ ] Modo verbose/quiet
-- [ ] Suporte a wildcards
+- [ ] Parallel processing
+- [ ] Advanced configuration options
+- [ ] Detailed logging
+- [ ] Verbose/quiet mode
+- [ ] Wildcard support
 
-## Conclusão
+## Conclusion
 
-As interfaces de usuário do IGCV Raster Utility foram projetadas para atender diferentes necessidades:
+The IGCV Raster Utility user interfaces were designed to meet different needs:
 
-- **GUI**: Focada em usabilidade e interação visual
-- **CLI**: Focada em automação e performance
+- **GUI**: Focused on usability and visual interaction
+- **CLI**: Focused on automation and performance
 
-Ambas as interfaces compartilham a mesma lógica de processamento através do Model, garantindo consistência nos resultados independentemente da interface escolhida. A arquitetura modular permite fácil manutenção e extensão de ambas as interfaces. 
+Both interfaces share the same processing logic through the Model, ensuring consistent results regardless of the chosen interface. The modular architecture allows easy maintenance and extension of both interfaces. 

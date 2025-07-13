@@ -1,12 +1,12 @@
 # Índice da Documentação - IGCV Raster Utility
 
-## 📚 Documentação Completa
+## Documentação Completa
 
 Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility, desde conceitos básicos até detalhes técnicos avançados.
 
 ---
 
-## 🚀 Início Rápido
+## Início Rápido
 
 ### [README Principal](README.md)
 - Visão geral do projeto
@@ -16,7 +16,7 @@ Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility
 
 ---
 
-## 🏗️ Arquitetura e Design
+## Arquitetura e Design
 
 ### [Arquitetura do Sistema](arquitetura.md)
 - **Padrão MVC** detalhado
@@ -37,7 +37,7 @@ Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility
 
 ---
 
-## 🖥️ Interfaces de Usuário
+## Interfaces de Usuário
 
 ### [Interfaces de Usuário](interface_usuario.md)
 - **Interface Gráfica (GUI)**
@@ -53,7 +53,7 @@ Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility
 
 ---
 
-## 👨‍💻 Desenvolvimento
+## Desenvolvimento
 
 ### [Guia de Desenvolvimento](desenvolvimento.md)
 - **Ambiente de desenvolvimento**
@@ -69,14 +69,14 @@ Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility
 
 ---
 
-## 📋 Planejamento
+## Planejamento
 
 ### [Roadmap de Desenvolvimento](roadmap.md)
-- **Fase 1**: Funcionalidades básicas ✅
-- **Fase 2**: Visualização e índices 🔄
-- **Fase 3**: Recursos avançados 📋
-- **Fase 4**: Polimento e documentação 📋
-- **Fase 5**: Expansão e integração 📋
+- **Fase 1**: Funcionalidades básicas
+- **Fase 2**: Visualização e índices
+- **Fase 3**: Recursos avançados
+- **Fase 4**: Polimento e documentação
+- **Fase 5**: Expansão e integração
 - **Priorização de funcionalidades**
 - **Cronograma geral**
 - **Considerações técnicas**
@@ -85,7 +85,7 @@ Esta documentação fornece uma visão abrangente do projeto IGCV Raster Utility
 
 ---
 
-## 📖 Documentação Técnica
+## Documentação Técnica
 
 ### Estrutura do Projeto
 ```
@@ -123,19 +123,24 @@ igcv_raster_utility/
 - **Responsabilidade**: Interface gráfica do usuário
 - **Funcionalidades**: Interface principal, seleção de bandas, visualização de metadados, preview
 
+#### `view/band_reorder_window.py`
+- **Responsabilidade**: Janela de reordenação de bandas
+- **Funcionalidades**: Interface de reordenação, drag & drop, validação de ordem
+
 #### `cli/cli_app.py`
 - **Responsabilidade**: Interface de linha de comando
 - **Funcionalidades**: Parsing de argumentos, processamento em lote, validação de parâmetros
 
 ---
 
-## 🔧 Funcionalidades
+## Funcionalidades
 
-### Funcionalidades Implementadas ✅
+### Funcionalidades Implementadas
 
 #### Processamento de Dados
 - **Carregamento de arquivos GeoTIFF**
 - **Seleção e leitura de bandas**
+- **Reordenação de bandas antes da exportação**
 - **Preservação completa de metadados**
 - **Exportação GeoTIFF**
 - **Geração de previews RGB**
@@ -154,7 +159,7 @@ igcv_raster_utility/
 
 ---
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 ### Stack Tecnológico
 
@@ -175,14 +180,15 @@ igcv_raster_utility/
 
 ---
 
-## 📊 Casos de Uso
+## Casos de Uso
 
 ### Uso Típico - GUI
 1. **Carregar arquivo raster** via botão "Abrir Raster"
 2. **Visualizar metadados** no painel direito
 3. **Selecionar bandas** na lista do painel esquerdo
-4. **Gerar preview** das bandas selecionadas
-5. **Exportar bandas** selecionadas para novo arquivo
+4. **Reordenar bandas** (opcional) via botão "Reordenar"
+5. **Gerar preview** das bandas selecionadas
+6. **Exportar bandas** selecionadas para novo arquivo
 
 ### Uso Típico - CLI
 ```bash
@@ -195,7 +201,7 @@ python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Problemas Comuns
 
@@ -234,7 +240,7 @@ python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 
 ---
 
-## 📞 Suporte
+## Suporte
 
 ### Recursos de Ajuda
 - **Issues**: Para bugs e solicitações de features
@@ -249,7 +255,7 @@ python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 
 ---
 
-## 📈 Métricas e Status
+## Métricas e Status
 
 ### Status do Projeto
 - **Versão atual**: MVP (Fase 1)
@@ -257,13 +263,13 @@ python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 - **Próxima versão**: v2.0 (Fase 2)
 
 ### Funcionalidades por Status
-- ✅ **Implementadas**: 15 funcionalidades
-- 🔄 **Em desenvolvimento**: 8 funcionalidades
-- 📋 **Planejadas**: 25+ funcionalidades
+- **Implementadas**: 15 funcionalidades
+- **Em desenvolvimento**: 8 funcionalidades
+- **Planejadas**: 25+ funcionalidades
 
 ---
 
-## 🔗 Links Úteis
+## Links Úteis
 
 ### Documentação Externa
 - [PyQt5 Documentation](https://doc.qt.io/qtforpython/)
@@ -277,18 +283,18 @@ python main.py --cli --input image.tif --bands 1 3 4 --output output.tif
 
 ---
 
-## 📝 Notas de Versão
+## Notas de Versão
 
 ### v1.0 (MVP) - Concluída
-- ✅ Funcionalidades básicas de processamento raster
-- ✅ Interface gráfica e linha de comando
-- ✅ Sistema de tradução
-- ✅ Tratamento de erros robusto
+- Funcionalidades básicas de processamento raster
+- Interface gráfica e linha de comando
+- Sistema de tradução
+- Tratamento de erros robusto
 
 ### v2.0 (Em Desenvolvimento)
-- 🔄 Thumbnails de bandas
-- 🔄 Cálculo de índices espectrais
-- 🔄 Melhorias na visualização
+- Thumbnails de bandas
+- Cálculo de índices espectrais
+- Melhorias na visualização
 
 ---
 

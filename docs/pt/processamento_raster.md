@@ -220,7 +220,35 @@ def generate_preview_image(filepath, band_indices, max_size=500):
                normalized = np.full_like(band_data, 128, dtype=np.uint8)
    ```
 
-### 4. Exportação de GeoTIFF (`export_tif`)
+### 4. Reordenação de Bandas
+
+**Propósito**: Permite reordenar as bandas selecionadas antes da exportação, mantendo a ordem personalizada no arquivo final.
+
+**Funcionalidades**:
+- Interface visual para reordenação
+- Drag & drop para reordenação intuitiva
+- Botões para mover bandas para cima/baixo
+- Reset para ordem original
+- Preservação da ordem na exportação
+
+**Processo de Reordenação**:
+1. **Seleção de Bandas**: Usuário seleciona bandas na interface principal
+2. **Abertura da Janela**: Botão "Reordenar" abre janela dedicada
+3. **Reordenação Visual**: Interface permite arrastar e soltar bandas
+4. **Confirmação**: Usuário confirma a nova ordem
+5. **Aplicação**: Ordem é aplicada na próxima exportação
+
+**Integração com Exportação**:
+```python
+# Controller verifica se há ordem reordenada
+if self.reordered_indices is not None:
+    selected_indices = self.reordered_indices
+    self.view.status_label.setText("Usando ordem reordenada das bandas.")
+else:
+    selected_indices = [self.view.band_list.row(item) for item in selected_items]
+```
+
+### 5. Exportação de GeoTIFF (`export_tif`)
 
 ```python
 def export_tif(out_path, bands, meta, band_names=None, 
@@ -330,10 +358,10 @@ def export_tif(out_path, bands, meta, band_names=None,
 **Solução**: Leitura apenas das bandas necessárias
 
 ```python
-# ❌ Ineficiente - carrega todas as bandas
+# Ineficiente - carrega todas as bandas
 all_bands = src.read()
 
-# ✅ Eficiente - carrega apenas bandas selecionadas
+# Eficiente - carrega apenas bandas selecionadas
 selected_bands = []
 for idx in selected_indices:
     band = src.read(idx + 1)
@@ -362,12 +390,12 @@ band_data = src.read(band_idx + 1,
 **Solução**: Uso de context managers
 
 ```python
-# ✅ Uso correto - liberação automática
+# Uso correto - liberação automática
 with rasterio.open(filepath) as src:
     data = src.read(1)
     # src é automaticamente fechado ao sair do bloco
 
-# ❌ Uso incorreto - pode causar vazamentos
+# Uso incorreto - pode causar vazamentos
 src = rasterio.open(filepath)
 data = src.read(1)
 # src pode não ser fechado se houver exceção

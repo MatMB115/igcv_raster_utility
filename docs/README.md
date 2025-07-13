@@ -1,145 +1,92 @@
-# Documentação - IGCV Raster Utility
+# IGCV Raster Utility - Documentação
 
-## Bem-vindo à Documentação Completa
-
-Esta pasta contém a documentação técnica completa do projeto **IGCV Raster Utility**, uma aplicação desktop para processamento, visualização e exportação de dados raster multiespectrais.
-
-## Começando
-
-### Para Usuários
-Se você é um usuário final, comece por:
-- **[Índice da Documentação](indice.md)** - Visão geral de todos os documentos
-- **[README Principal](../README.MD)** - Informações básicas sobre o projeto
-
-### Para Desenvolvedores
-Se você é um desenvolvedor ou contribuidor, recomendamos:
-- **[Guia de Desenvolvimento](desenvolvimento.md)** - Como contribuir e estender o projeto
-- **[Arquitetura do Sistema](arquitetura.md)** - Entendimento da estrutura do código
-
-## Documentos Disponíveis
-
-### Arquitetura e Design
-- **[Arquitetura do Sistema](arquitetura.md)** - Padrão MVC, fluxo de dados, princípios de design
-- **[Processamento de Dados Raster](processamento_raster.md)** - Operações principais, otimizações, metadados
-
-### Interfaces de Usuário
-- **[Interfaces de Usuário](interface_usuario.md)** - GUI e CLI detalhadas, comparações, usabilidade
-
-### Desenvolvimento
-- **[Guia de Desenvolvimento](desenvolvimento.md)** - Padrões de código, testes, extensibilidade
-
-### Planejamento
-- **[Roadmap de Desenvolvimento](roadmap.md)** - Fases de desenvolvimento, priorizações, cronogramas
-
-### Referência
-- **[Índice da Documentação](indice.md)** - Navegação completa e referência rápida
+Esta pasta contém a documentação completa do projeto IGCV Raster Utility, organizada por idioma.
 
 ## Estrutura da Documentação
 
 ```
 docs/
-├── README.md                    # Este arquivo
-├── indice.md                    # Índice e navegação
-├── arquitetura.md               # Arquitetura do sistema
-├── processamento_raster.md      # Processamento de dados
-├── interface_usuario.md         # Interfaces GUI e CLI
-├── desenvolvimento.md           # Guia para desenvolvedores
-└── roadmap.md                   # Planejamento futuro
+├── README.md          # Este arquivo
+├── pt/                # Documentação em Português
+│   ├── README.md      # Visão geral do projeto
+│   ├── indice.md      # Índice da documentação
+│   ├── arquitetura.md # Arquitetura do sistema
+│   ├── desenvolvimento.md # Guia de desenvolvimento
+│   ├── interface_usuario.md # Interfaces de usuário
+│   ├── processamento_raster.md # Processamento de dados
+│   └── roadmap.md     # Roadmap de desenvolvimento
+└── en/                # Documentação em Inglês
+    └── (arquivos em inglês - em desenvolvimento)
 ```
 
-## 🔄 Manutenção da Documentação
+## Idiomas Disponíveis
 
-### Princípios
-- **Atualização contínua** com o desenvolvimento
-- **Clareza e simplicidade** na comunicação
-- **Exemplos práticos** sempre que possível
-- **Consistência** na formatação e estilo
+### Português (pt/)
+- **Completa**: Toda a documentação está disponível em português
+- **Atualizada**: Inclui todas as funcionalidades implementadas
+- **Detalhada**: Documentação técnica completa com exemplos
 
-### Responsabilidades
-- **Desenvolvedores**: Atualizar documentação técnica
-- **Mantenedores**: Revisar e organizar documentação
-- **Usuários**: Reportar lacunas ou inconsistências
+### Inglês (en/)
+- **Em desenvolvimento**: Tradução em andamento
+- **Prioridade**: Documentação básica será traduzida primeiro
+- **Cronograma**: Tradução completa planejada para próximas versões
 
-### Processo de Atualização
-1. **Identificar necessidade** de atualização
-2. **Modificar documento** relevante
-3. **Revisar consistência** com outros documentos
-4. **Atualizar índice** se necessário
-5. **Comunicar mudanças** à comunidade
+## Como Usar
 
-## 🤝 Contribuindo para a Documentação
+### Para Desenvolvedores
+- Use a documentação em **português** para desenvolvimento atual
+- A documentação em **inglês** será útil para contribuições internacionais
 
-### Como Contribuir
-1. **Identificar** área que precisa de melhoria
-2. **Propor** mudanças via issue ou pull request
-3. **Seguir** padrões de formatação Markdown
-4. **Incluir** exemplos práticos quando relevante
-5. **Revisar** consistência com outros documentos
+### Para Usuários
+- Interface disponível em português e inglês
+- Documentação técnica em português
+- Guias de usuário em ambos os idiomas (quando disponível)
 
-### Padrões de Formatação
-- **Markdown** como formato principal
-- **Emojis** para melhor organização visual
-- **Código** em blocos apropriados
-- **Links** para navegação entre documentos
-- **Tabelas** para informações estruturadas
+## Atualizações
 
-### Exemplos de Melhorias
-- **Correção de erros** técnicos
-- **Adição de exemplos** práticos
-- **Melhoria da clareza** de explicações
-- **Atualização** de informações desatualizadas
-- **Tradução** para outros idiomas
+### Processo de Tradução
+1. **Desenvolvimento**: Nova funcionalidade documentada em português
+2. **Revisão**: Documentação revisada e testada
+3. **Tradução**: Tradução para inglês
+4. **Validação**: Revisão da tradução técnica
 
-## Status da Documentação
+### Manutenção
+- Documentação em português é a fonte principal
+- Mudanças são aplicadas primeiro em português
+- Traduções são atualizadas conforme necessário
 
-### Cobertura Atual
-- ✅ **Arquitetura**: Documentada completamente
-- ✅ **Interfaces**: GUI e CLI documentadas
-- ✅ **Desenvolvimento**: Guias e padrões estabelecidos
-- ✅ **Processamento**: Operações principais documentadas
-- 🔄 **Roadmap**: Em atualização contínua
+## Índice Rápido
 
-### Áreas de Melhoria
-- **Exemplos práticos**: Mais casos de uso
-- **Tutoriais**: Guias passo a passo
-- **FAQ**: Perguntas frequentes
-- **Vídeos**: Demonstrações visuais (futuro)
+### Documentação em Português
+- **[README](pt/README.md)**: Visão geral do projeto
+- **[Índice](pt/indice.md)**: Navegação completa da documentação
+- **[Arquitetura](pt/arquitetura.md)**: Design e estrutura do sistema
+- **[Desenvolvimento](pt/desenvolvimento.md)**: Guia para desenvolvedores
+- **[Interface](pt/interface_usuario.md)**: GUI e CLI
+- **[Processamento](pt/processamento_raster.md)**: Operações com dados raster
+- **[Roadmap](pt/roadmap.md)**: Planejamento de desenvolvimento
 
-## Links Úteis
+### Documentação em Inglês
+- **Em desenvolvimento** - será adicionada conforme tradução
 
-### Documentação Externa
-- [PyQt5 Documentation](https://doc.qt.io/qtforpython/)
-- [rasterio Documentation](https://rasterio.readthedocs.io/)
-- [NumPy Documentation](https://numpy.org/doc/)
+## Contribuição
 
-### Recursos do Projeto
-- [Repositório Principal](../README.MD)
-- [Issues](https://github.com/your-username/igcv_raster_utility/issues)
-- [Releases](https://github.com/your-username/igcv_raster_utility/releases)
+### Para Documentação
+- **Correções**: Abra issues para erros na documentação
+- **Melhorias**: Sugestões são bem-vindas
+- **Traduções**: Ajude com traduções para inglês
+
+### Para Desenvolvimento
+- Use a documentação em português como referência
+- Mantenha documentação atualizada ao adicionar funcionalidades
+- Siga os padrões estabelecidos
 
 ## Suporte
 
-### Para Dúvidas sobre o Projeto
-- **README Principal**: Informações básicas
-- **Issues**: Para bugs e solicitações de features
-- **Logs**: Para debugging (pasta `logs/`)
-- **Contato**: entre em contato por [email](mailto:matmb@unifei.edu.br)
-
-## Notas Finais
-
-Esta documentação é um **documento vivo** que evolui com o projeto. Sua qualidade e utilidade dependem da colaboração da comunidade.
-
-### Compromissos
-- **Manter atualizada** com o desenvolvimento
-- **Ser clara e acessível** para diferentes públicos
-- **Fornecer exemplos práticos** sempre que possível
-- **Facilitar contribuições** da comunidade
-
-### Agradecimentos
-Agradecemos a todos os contribuidores que ajudaram a criar e manter esta documentação. Seu feedback e contribuições são essenciais para a qualidade e utilidade destes documentos.
+- **Issues**: Use o sistema de issues do GitHub
+- **Discussões**: Participe das discussões do projeto
+- **Documentação**: Consulte esta documentação primeiro
 
 ---
 
-*Última atualização: Julho 2025*
-
-*Para dúvidas sobre esta documentação, abra uma issue no repositório.* 
+**Última atualização**: Documentação atualizada com funcionalidade de reordenação de bandas 

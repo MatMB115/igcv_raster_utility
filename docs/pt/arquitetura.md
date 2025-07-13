@@ -175,6 +175,37 @@ class MainController:
 - **Validação**: Aplica regras de negócio
 - **Estado**: Mantém estado da aplicação
 - **Tratamento de Erros**: Gerencia exceções da interface
+- **Gerenciamento de Reordenação**: Controla ordem das bandas
+
+### Componente de Reordenação de Bandas
+
+A funcionalidade de reordenação de bandas é implementada como um componente especializado que segue os princípios MVC:
+
+```python
+# Janela de Reordenação (View Especializada)
+class BandReorderWindow(QDialog):
+    bands_reordered = pyqtSignal(list)  # Sinal para comunicação
+    
+    def __init__(self, parent, selected_bands, band_names):
+        # Configuração da interface de reordenação
+        
+    def _confirm_order(self):
+        """Confirma a ordem e emite sinal"""
+        self.bands_reordered.emit(self.reordered_indices)
+```
+
+**Arquitetura da Reordenação**:
+- **View Especializada**: `BandReorderWindow` - Interface dedicada para reordenação
+- **Comunicação por Sinais**: Usa sistema de sinais do Qt para comunicação assíncrona
+- **Estado Persistente**: Controller mantém ordem reordenada até próxima exportação
+- **Validação Integrada**: Verifica seleção de bandas antes de abrir janela
+- **Feedback Visual**: Atualização em tempo real da ordem das bandas
+
+**Integração com MVC**:
+- **View**: `BandReorderWindow` é uma extensão da View principal
+- **Controller**: Gerencia estado de reordenação e coordena comunicação
+- **Model**: Não é afetado - processa dados na ordem recebida
+- **Sinais**: Permite comunicação desacoplada entre componentes
 
 ## Fluxo de Dados
 
@@ -232,6 +263,84 @@ sequenceDiagram
     V->>U: Mensagem de confirmação
 ```
 
+### Fluxo de Reordenação de Bandas
+
+```mermaid
+sequenceDiagram
+    participant U as Usuário
+    participant V as View
+    participant BR as BandReorderWindow
+    participant C as Controller
+    participant M as Model
+
+    U->>V: Seleciona bandas e clica "Reordenar"
+    V->>C: open_reorder_window()
+    C->>V: Valida seleção de bandas
+    V->>C: Retorna índices selecionados
+    C->>BR: Cria BandReorderWindow(selected_bands, band_names)
+    BR->>U: Exibe janela de reordenação
+    
+    Note over U,BR: Usuário reordena bandas via drag & drop ou botões
+    
+    U->>BR: Arrasta bandas ou usa botões de mover
+    BR->>BR: _update_order()
+    BR->>U: Atualiza visualização da ordem
+    
+    alt Usuário confirma ordem
+        U->>BR: Clica "Confirmar Ordem"
+        BR->>BR: _confirm_order()
+        BR->>C: bands_reordered.emit(reordered_indices)
+        C->>C: _on_bands_reordered(reordered_indices)
+        C->>C: self.reordered_indices = reordered_indices
+        C->>V: Atualiza status
+        V->>U: Exibe "Ordem das bandas atualizada!"
+        BR->>U: Fecha janela
+    else Usuário cancela
+        U->>BR: Clica "Cancelar"
+        BR->>U: Fecha janela sem alterações
+    end
+    
+    Note over C: Ordem reordenada será usada na próxima exportação
+```
+
+### Fluxo de Exportação com Reordenação
+
+```mermaid
+sequenceDiagram
+    participant U as Usuário
+    participant V as View
+    participant C as Controller
+    participant M as Model
+    participant F as Sistema de Arquivos
+
+    U->>V: Seleciona bandas e clica "Exportar"
+    V->>C: export_selected_bands()
+    C->>V: Obtém seleção
+    
+    alt Ordem reordenada existe
+        C->>C: Usa self.reordered_indices
+        C->>V: Exibe "Usando ordem reordenada das bandas."
+    else Ordem original
+        V->>C: Retorna índices selecionados
+        C->>C: Usa índices da seleção
+    end
+    
+    C->>M: read_selected_bands(filepath, selected_indices)
+    M->>F: Lê bandas na ordem especificada
+    F->>M: Retorna dados
+    M->>C: bands, meta, names
+    C->>V: Solicita caminho de saída
+    V->>U: Diálogo de salvamento
+    U->>V: Define caminho
+    V->>C: Retorna caminho
+    C->>M: export_tif()
+    M->>F: Escreve arquivo com ordem reordenada
+    F->>M: Confirma escrita
+    M->>C: Confirmação
+    C->>V: Exibe sucesso
+    V->>U: Mensagem de confirmação
+```
+
 ## Princípios de Design Aplicados
 
 ### 1. Separação de Responsabilidades (SRP)
@@ -253,6 +362,25 @@ sequenceDiagram
 - Implementações podem ser substituídas sem quebrar funcionalidade
 - Interfaces são respeitadas por todas as implementações
 - Comportamento é consistente entre implementações
+
+### 5. Padrão Observer (Para Reordenação)
+- Sistema de sinais do Qt para comunicação entre componentes
+- Desacoplamento entre janela de reordenação e controller
+- Notificação assíncrona de mudanças de estado
+
+```python
+# Exemplo do padrão Observer na reordenação
+class BandReorderWindow(QDialog):
+    bands_reordered = pyqtSignal(list)  # Sinal (Subject)
+    
+    def _confirm_order(self):
+        self.bands_reordered.emit(self.reordered_indices)
+
+class MainController:
+    def open_reorder_window(self):
+        reorder_window = BandReorderWindow(...)
+        reorder_window.bands_reordered.connect(self._on_bands_reordered)  # Observer
+```
 
 ## Estratégias de Tratamento de Erros
 
@@ -328,6 +456,12 @@ class CLIError(IGCVRasterError):
    - Necessidade de threads para operações longas
    - Feedback de progresso para o usuário
 
+3. **Reordenação de Bandas**
+   - Estado de reordenação deve persistir entre operações
+   - Validação de seleção antes de abrir janela de reordenação
+   - Feedback claro sobre ordem atual vs. original
+   - Reset de ordem ao carregar novo arquivo
+
 ## Extensibilidade
 
 ### Pontos de Extensão
@@ -346,6 +480,12 @@ class CLIError(IGCVRasterError):
    - API REST para integração web
    - Biblioteca Python para uso programático
    - Integração com outros softwares GIS
+
+4. **Extensões de Reordenação**
+   - Presets de ordem para diferentes aplicações (RGB, NIR, etc.)
+   - Salvamento de configurações de reordenação
+   - Reordenação baseada em metadados das bandas
+   - Reordenação automática por critérios (comprimento de onda, etc.)
 
 ### Padrões de Extensão
 

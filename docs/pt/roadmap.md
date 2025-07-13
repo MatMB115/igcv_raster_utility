@@ -4,7 +4,7 @@
 
 Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster Utility, organizado em fases que priorizam funcionalidades essenciais e melhorias incrementais.
 
-## Fase 1: Funcionalidades Básicas ✅ (Concluída)
+## Fase 1: Funcionalidades Básicas (Concluída)
 
 ### Objetivos Alcançados
 
@@ -17,6 +17,11 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
   - Interface de seleção múltipla
   - Preservação de metadados
   - Exportação GeoTIFF
+
+- [x] **Reordenação de bandas**
+  - Interface visual de reordenação
+  - Drag & drop para reordenação
+  - Preservação da ordem na exportação
 
 - [x] **Interface gráfica (GUI)**
   - Interface PyQt5 responsiva
@@ -46,7 +51,7 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 - **Logging**: Sistema centralizado
 - **Tradução**: Qt Translation System
 
-## Fase 2: Visualização e Índices 🔄 (Em Desenvolvimento)
+## Fase 2: Visualização e Índices (Em Desenvolvimento)
 
 ### Objetivos Principais
 
@@ -59,7 +64,7 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 - [ ] **Interface de seleção visual**
   - Grid de thumbnails clicáveis
   - Preview em tempo real da seleção
-  - Drag & drop para reordenação
+  - Seleção visual aprimorada
 
 #### 2.2 Cálculo de Índices Espectrais
 - [ ] **Índices básicos**
@@ -91,7 +96,7 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 
 ### Cronograma Estimado: 3-4 meses
 
-## Fase 3: Recursos Avançados 📋 (Planejado)
+## Fase 3: Recursos Avançados (Planejado)
 
 ### Objetivos Principais
 
@@ -146,7 +151,7 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 
 ### Cronograma Estimado: 6-8 meses
 
-## Fase 4: Polimento e Documentação 📋 (Futuro)
+## Fase 4: Polimento e Documentação (Futuro)
 
 ### Objetivos Principais
 
@@ -200,7 +205,7 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 
 ### Cronograma Estimado: 4-6 meses
 
-## Fase 5: Expansão e Integração 📋 (Longo Prazo)
+## Fase 5: Expansão e Integração (Longo Prazo)
 
 ### Objetivos Principais
 
@@ -275,11 +280,11 @@ Este documento apresenta o planejamento de desenvolvimento futuro do IGCV Raster
 ### Timeline de Desenvolvimento
 
 ```
-2024 Q1-Q2: Fase 1 ✅ (Concluída)
-2024 Q3-Q4: Fase 2 🔄 (Em desenvolvimento)
-2025 Q1-Q2: Fase 3 📋 (Planejado)
-2025 Q3-Q4: Fase 4 📋 (Futuro)
-2026+: Fase 5 📋 (Longo prazo)
+2024 Q1-Q2: Fase 1 (Concluída)
+2024 Q3-Q4: Fase 2 (Em desenvolvimento)
+2025 Q1-Q2: Fase 3 (Planejado)
+2025 Q3-Q4: Fase 4 (Futuro)
+2026+: Fase 5 (Longo prazo)
 ```
 
 ### Marcos Principais
@@ -369,7 +374,7 @@ pandas>=1.5.0             # Análise de dados
 ### Critérios de Conclusão
 
 #### Por Fase
-- **Fase 1**: ✅ Todas as funcionalidades básicas implementadas e testadas
+- **Fase 1**: Todas as funcionalidades básicas implementadas e testadas
 - **Fase 2**: Thumbnails funcionais + 5 índices espectrais implementados
 - **Fase 3**: Processamento em lote + editor de fórmulas funcional
 - **Fase 4**: Cobertura de testes > 90% + documentação completa
