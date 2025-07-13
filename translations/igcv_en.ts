@@ -248,5 +248,88 @@
         <source>Erro ao exportar bandas</source>
         <translation>Error exporting bands</translation>
     </message>
+    <message>
+        <location filename="../view/main_window.py" line="50"/>
+        <source>Reordenar Bandas</source>
+        <translation>Reorder Bands</translation>
+    </message>
+    <message>
+        <location filename="../view/main_window.py" line="365"/>
+        <source>Erro ao abrir janela de reordenação:</source>
+        <translation>Error opening reorder window:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="150"/>
+        <source>Ordem das bandas atualizada!</source>
+        <translation>Band order updated!</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="152"/>
+        <source>Reordenação cancelada.</source>
+        <translation>Reordering cancelled.</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="155"/>
+        <source>Erro inesperado ao abrir janela de reordenação:</source>
+        <translation>Unexpected error opening reorder window:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="156"/>
+        <source>Erro na reordenação.</source>
+        <translation>Error in reordering.</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="162"/>
+        <source>Erro ao processar reordenação:</source>
+        <translation>Error processing reordering:</translation>
+    </message>
+    <message>
+        <location filename="../controller/main_controller.py" line="75"/>
+        <source>Usando ordem reordenada das bandas.</source>
+        <translation>Using reordered band order.</translation>
+    </message>
+</context>
+<context>
+    <name>BandReorderWindow</name>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="35"/>
+        <source>Reordenar Bandas para Exportação</source>
+        <translation>Reorder Bands for Export</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="40"/>
+        <source>Arraste as bandas para reordená-las. A ordem será mantida na exportação.</source>
+        <translation>Drag the bands to reorder them. The order will be maintained in the export.</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="45"/>
+        <source>Ordem das Bandas</source>
+        <translation>Band Order</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="55"/>
+        <source>Mover para Cima</source>
+        <translation>Move Up</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="58"/>
+        <source>Mover para Baixo</source>
+        <translation>Move Down</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="61"/>
+        <source>Resetar Ordem</source>
+        <translation>Reset Order</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="70"/>
+        <source>Cancelar</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="../view/band_reorder_window.py" line="73"/>
+        <source>Confirmar Ordem</source>
+        <translation>Confirm Order</translation>
+    </message>
 </context>
 </TS>

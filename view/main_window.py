@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (
     QMainWindow, QAction, QMenuBar, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QLabel, QListWidget, QListWidgetItem, QMessageBox, QTextEdit, QSplitter, QGroupBox, QCheckBox
 )
+from view.band_reorder_window import BandReorderWindow
 from PyQt5.QtCore import Qt, QTranslator, QLocale, QLibraryInfo, QCoreApplication
 from PyQt5.QtGui import QPixmap, QImage, QIcon
 import os
@@ -83,6 +84,11 @@ class MainWindow(QMainWindow):
                 self.export_button.clicked.connect(self._export_selected_bands)
                 self.export_button.setEnabled(False)
 
+                # Botão de reordenação
+                self.reorder_button = QPushButton(self.tr("Reordenar Bandas"))
+                self.reorder_button.clicked.connect(self._open_reorder_window)
+                self.reorder_button.setEnabled(False)
+
                 self.status_label = QLabel(self.tr("Selecione um raster GeoTIFF."))
                 self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -90,6 +96,7 @@ class MainWindow(QMainWindow):
                 left_layout.addWidget(QLabel(self.tr("Bandas disponíveis:")))
                 left_layout.addWidget(self.band_list)
                 left_layout.addWidget(preview_group)
+                left_layout.addWidget(self.reorder_button)
                 left_layout.addWidget(self.export_button)
                 left_layout.addWidget(self.status_label)
                 left_panel.setLayout(left_layout)
@@ -165,6 +172,7 @@ class MainWindow(QMainWindow):
             self.action_english.triggered.connect(lambda: self.switch_language('en'))
         self.open_button.setText(self.tr("Abrir Raster"))
         self.export_button.setText(self.tr("Exportar Selecionadas"))
+        self.reorder_button.setText(self.tr("Reordenar Bandas"))
         self.status_label.setText(self.tr("Selecione um raster GeoTIFF."))
         
         # Update metadata group title and placeholder text
@@ -356,6 +364,16 @@ class MainWindow(QMainWindow):
                 QMessageBox.warning(self, self.tr("Erro"), self.tr("Controller não inicializado"))
         except Exception as e:
             QMessageBox.critical(self, self.tr("Erro"), f"{self.tr('Erro ao exportar bandas:')}\n{str(e)}")
+
+    def _open_reorder_window(self):
+        """Método interno para abrir janela de reordenação"""
+        try:
+            if self.controller:
+                self.controller.open_reorder_window()
+            else:
+                QMessageBox.warning(self, self.tr("Erro"), self.tr("Controller não inicializado"))
+        except Exception as e:
+            QMessageBox.critical(self, self.tr("Erro"), f"{self.tr('Erro ao abrir janela de reordenação:')}\n{str(e)}")
 
     def change_to_portuguese(self):
         """Muda o idioma para português"""

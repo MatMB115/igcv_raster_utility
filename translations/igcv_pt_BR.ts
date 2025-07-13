@@ -34,6 +34,11 @@
         <translation>Exportar Selecionadas</translation>
     </message>
     <message>
+        <location filename="../view/main_window.py" line="50"/>
+        <source>Reordenar Bandas</source>
+        <translation>Reordenar Bandas</translation>
+    </message>
+    <message>
         <location filename="../view/main_window.py" line="52"/>
         <source>Selecione um raster GeoTIFF.</source>
         <translation>Selecione um raster GeoTIFF.</translation>
@@ -208,155 +213,48 @@
         <source>Selecione 1 a 3 bandas para preview</source>
         <translation>Selecione 1 a 3 bandas para preview</translation>
     </message>
+</context>
+<context>
+    <name>BandReorderWindow</name>
     <message>
-        <location filename="../view/main_window.py" line="310"/>
-        <source>Erro ao gerar preview:</source>
-        <translation>Erro ao gerar preview:</translation>
+        <location filename="../view/band_reorder_window.py" line="35"/>
+        <source>Reordenar Bandas para Exportação</source>
+        <translation>Reordenar Bandas para Exportação</translation>
     </message>
     <message>
-        <location filename="../view/main_window.py" line="320"/>
-        <source>Erro ao exibir preview:</source>
-        <translation>Erro ao exibir preview:</translation>
+        <location filename="../view/band_reorder_window.py" line="40"/>
+        <source>Arraste as bandas para reordená-las. A ordem será mantida na exportação.</source>
+        <translation>Arraste as bandas para reordená-las. A ordem será mantida na exportação.</translation>
     </message>
     <message>
-        <location filename="../view/main_window.py" line="315"/>
-        <source>Erro ao gerar preview</source>
-        <translation>Erro ao gerar preview</translation>
+        <location filename="../view/band_reorder_window.py" line="45"/>
+        <source>Ordem das Bandas</source>
+        <translation>Ordem das Bandas</translation>
     </message>
     <message>
-        <location filename="../controller/main_controller.py" line="40"/>
-        <source>Raster carregado:</source>
-        <translation>Raster carregado:</translation>
+        <location filename="../view/band_reorder_window.py" line="55"/>
+        <source>Mover para Cima</source>
+        <translation>Mover para Cima</translation>
     </message>
     <message>
-        <location filename="../controller/main_controller.py" line="50"/>
-        <source>Aviso</source>
-        <translation>Aviso</translation>
+        <location filename="../view/band_reorder_window.py" line="58"/>
+        <source>Mover para Baixo</source>
+        <translation>Mover para Baixo</translation>
     </message>
     <message>
-        <location filename="../controller/main_controller.py" line="51"/>
-        <source>Nenhum raster foi carregado!</source>
-        <translation>Nenhum raster foi carregado!</translation>
+        <location filename="../view/band_reorder_window.py" line="61"/>
+        <source>Resetar Ordem</source>
+        <translation>Resetar Ordem</translation>
     </message>
     <message>
-        <location filename="../controller/main_controller.py" line="55"/>
-        <source>Selecione pelo menos uma banda!</source>
-        <translation>Selecione pelo menos uma banda!</translation>
+        <location filename="../view/band_reorder_window.py" line="70"/>
+        <source>Cancelar</source>
+        <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../controller/main_controller.py" line="65"/>
-        <source>Erro ao ler bandas selecionadas:</source>
-        <translation>Erro ao ler bandas selecionadas:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="68"/>
-        <source>Erro inesperado ao ler bandas:</source>
-        <translation>Erro inesperado ao ler bandas:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="75"/>
-        <source>Exportação cancelada.</source>
-        <translation>Exportação cancelada.</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="82"/>
-        <source>Arquivo exportado:</source>
-        <translation>Arquivo exportado:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="83"/>
-        <source>Sucesso</source>
-        <translation>Sucesso</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="84"/>
-        <source>Arquivo exportado com sucesso:</source>
-        <translation>Arquivo exportado com sucesso:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="86"/>
-        <source>Erro ao exportar arquivo:</source>
-        <translation>Erro ao exportar arquivo:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="87"/>
-        <source>Erro na exportação.</source>
-        <translation>Erro na exportação.</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="89"/>
-        <source>Erro inesperado durante exportação:</source>
-        <translation>Erro inesperado durante exportação:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="95"/>
-        <source>Selecione 1 a 3 bandas para preview!</source>
-        <translation>Selecione 1 a 3 bandas para preview!</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="103"/>
-        <source>Preview RGB gerado com sucesso!</source>
-        <translation>Preview RGB gerado com sucesso!</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="105"/>
-        <source>Erro ao gerar preview:</source>
-        <translation>Erro ao gerar preview:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="106"/>
-        <source>Erro no preview.</source>
-        <translation>Erro no preview.</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="108"/>
-        <source>Erro inesperado ao gerar preview:</source>
-        <translation>Erro inesperado ao gerar preview:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="112"/>
-        <source>Erro inesperado durante preview:</source>
-        <translation>Erro inesperado durante preview:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="25"/>
-        <source>Erro ao carregar raster:</source>
-        <translation>Erro ao carregar raster:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="28"/>
-        <source>Erro inesperado ao carregar raster:</source>
-        <translation>Erro inesperado ao carregar raster:</translation>
-    </message>
-    <message>
-        <location filename="../controller/main_controller.py" line="35"/>
-        <source>Erro inesperado ao abrir raster:</source>
-        <translation>Erro inesperado ao abrir raster:</translation>
-    </message>
-    <message>
-        <location filename="../view/main_window.py" line="237"/>
-        <source>WKT</source>
-        <translation>WKT</translation>
-    </message>
-    <message>
-        <location filename="../view/main_window.py" line="124"/>
-        <source>Erro ao criar interface</source>
-        <translation>Erro ao criar interface</translation>
-    </message>
-    <message>
-        <location filename="../view/main_window.py" line="213"/>
-        <source>Erro ao definir controller</source>
-        <translation>Erro ao definir controller</translation>
-    </message>
-    <message>
-        <location filename="../view/main_window.py" line="328"/>
-        <source>Erro ao abrir raster</source>
-        <translation>Erro ao abrir raster</translation>
-    </message>
-    <message>
-        <location filename="../view/main_window.py" line="348"/>
-        <source>Erro ao exportar bandas</source>
-        <translation>Erro ao exportar bandas</translation>
+        <location filename="../view/band_reorder_window.py" line="73"/>
+        <source>Confirmar Ordem</source>
+        <translation>Confirmar Ordem</translation>
     </message>
 </context>
 </TS>

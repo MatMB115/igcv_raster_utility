@@ -1,6 +1,7 @@
 from model import raster_handler
 from PyQt5.QtWidgets import QFileDialog, QListWidgetItem, QMessageBox
 from exceptions import RasterHandlerError, ControllerError
+from view.band_reorder_window import BandReorderWindow
 
 class MainController:
     def __init__(self, view):
@@ -8,6 +9,7 @@ class MainController:
         self.raster_path = None
         self.band_names = []
         self.meta = None
+        self.reordered_indices = None  # Armazena a ordem reordenada das bandas
 
     def open_raster(self):
         """Opens a raster file and loads its information"""
@@ -43,7 +45,11 @@ class MainController:
             
             self.view.export_button.setEnabled(True)
             self.view.preview_button.setEnabled(True)
+            self.view.reorder_button.setEnabled(True)
             self.view.status_label.setText(self.view.tr(f"Raster carregado: {filepath}"))
+            
+            # Reset reordered indices
+            self.reordered_indices = None
             
             # Update metadata display
             self.view.update_metadata_display(self.meta, self.band_names)
@@ -65,8 +71,12 @@ class MainController:
                 QMessageBox.warning(self.view, self.view.tr("Aviso"), self.view.tr("Selecione pelo menos uma banda!"))
                 return
             
-            # Get indices of selected bands
-            selected_indices = [self.view.band_list.row(item) for item in selected_items]
+            # Get indices of selected bands (use reordered indices if available)
+            if self.reordered_indices is not None:
+                selected_indices = self.reordered_indices
+                self.view.status_label.setText(self.view.tr("Usando ordem reordenada das bandas."))
+            else:
+                selected_indices = [self.view.band_list.row(item) for item in selected_items]
             
             # Read selected bands
             try:
@@ -138,3 +148,48 @@ class MainController:
         except Exception as e:
             QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro inesperado durante preview:')}\n{str(e)}")
             self.view.status_label.setText(self.view.tr("Erro no preview."))
+
+    def open_reorder_window(self):
+        """Abre a janela de reordenação de bandas"""
+        try:
+            # Check if there's a loaded raster
+            if not self.raster_path:
+                QMessageBox.warning(self.view, self.view.tr("Aviso"), self.view.tr("Nenhum raster foi carregado!"))
+                return
+            
+            # Check if there are selected bands
+            selected_items = self.view.band_list.selectedItems()
+            if not selected_items:
+                QMessageBox.warning(self.view, self.view.tr("Aviso"), self.view.tr("Selecione pelo menos uma banda!"))
+                return
+            
+            # Get indices of selected bands
+            selected_indices = [self.view.band_list.row(item) for item in selected_items]
+            
+            # Create and show reorder window
+            reorder_window = BandReorderWindow(
+                parent=self.view,
+                selected_bands=selected_indices,
+                band_names=self.band_names
+            )
+            
+            # Connect the signal
+            reorder_window.bands_reordered.connect(self._on_bands_reordered)
+            
+            # Show the window
+            if reorder_window.exec_() == BandReorderWindow.Accepted:
+                self.view.status_label.setText(self.view.tr("Ordem das bandas atualizada!"))
+            else:
+                self.view.status_label.setText(self.view.tr("Reordenação cancelada."))
+                
+        except Exception as e:
+            QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro inesperado ao abrir janela de reordenação:')}\n{str(e)}")
+            self.view.status_label.setText(self.view.tr("Erro na reordenação."))
+
+    def _on_bands_reordered(self, reordered_indices):
+        """Callback chamado quando as bandas são reordenadas"""
+        try:
+            self.reordered_indices = reordered_indices
+            self.view.status_label.setText(self.view.tr("Ordem das bandas atualizada!"))
+        except Exception as e:
+            QMessageBox.critical(self.view, self.view.tr("Erro"), f"{self.view.tr('Erro ao processar reordenação:')}\n{str(e)}")
