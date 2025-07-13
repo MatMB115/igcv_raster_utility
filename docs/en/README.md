@@ -57,15 +57,23 @@ docs/en/
 - **[README](../pt/README.md)**: Project overview
 - **[Index](../pt/indice.md)**: Complete documentation navigation
 - **[Architecture](../pt/arquitetura.md)**: System design and structure
-- **[Development](../pt/desenvolvimento.md)**: Developer guide
+- **[Development](../pt/desenvolvimento.md)**: Developer guide (includes compilation instructions)
 - **[User Interface](../pt/interface_usuario.md)**: GUI and CLI
 - **[Raster Processing](../pt/processamento_raster.md)**: Raster data operations
 - **[Roadmap](../pt/roadmap.md)**: Development planning
 
 ### English Documentation (In Development)
 - **This file**: Basic overview
+- **[Development](development.md)**: Developer guide (includes compilation instructions)
 - **Technical docs**: Coming soon
 - **User guides**: Coming soon
+
+### Quick Compilation Reference
+For building executables, see the **Compilation de Executáveis** section in:
+- **[Portuguese Development Guide](../pt/desenvolvimento.md#compilação-de-executáveis)**
+- **[English Development Guide](development.md#building-executables)**
+
+Or use the utility script: `python utils/find_rasterio_paths.py`
 
 ## Features
 

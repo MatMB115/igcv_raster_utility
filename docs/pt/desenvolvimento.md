@@ -599,6 +599,118 @@ class RasterProcessor:
 - [ ] Tratamento de erros implementado
 - [ ] Compatibilidade mantida
 
+## Compilação de Executáveis
+
+### Pré-requisitos
+
+Antes de compilar executáveis, certifique-se de ter instalado:
+
+- **PyInstaller**: `pip install pyinstaller`
+- **Todas as dependências do projeto**: `pip install -r requirements.txt`
+- **Dados GDAL e PROJ**: Estes são incluídos automaticamente com o rasterio
+
+### Compilação para Linux
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations:translations" \
+  --add-data "/home/maysu-lp/Documentos/github/igcv_raster_utility/local/lib/python3.8/site-packages/rasterio/gdal_data:gdal_data" \
+  --add-data "/home/maysu-lp/Documentos/github/igcv_raster_utility/local/lib/python3.8/site-packages/rasterio/proj_data:proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Compilação para Windows
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations;translations" \
+  --add-data "C:\caminho\para\seu\env\Lib\site-packages\rasterio\gdal_data;gdal_data" \
+  --add-data "C:\caminho\para\seu\env\Lib\site-packages\rasterio\proj_data;proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Compilação para macOS
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations:translations" \
+  --add-data "/caminho/para/seu/env/lib/python3.x/site-packages/rasterio/gdal_data:gdal_data" \
+  --add-data "/caminho/para/seu/env/lib/python3.x/site-packages/rasterio/proj_data:proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Notas Importantes
+
+#### Caminhos dos Dados GDAL e PROJ
+
+Os caminhos para os diretórios `gdal_data` e `proj_data` variam dependendo do seu ambiente Python e sistema operacional. Para encontrar os caminhos corretos automaticamente:
+
+```bash
+# Use o script utilitário fornecido
+python utils/find_rasterio_paths.py
+```
+
+Este script irá:
+- Encontrar o caminho de instalação do rasterio
+- Localizar os diretórios de dados GDAL e PROJ
+- Gerar um comando PyInstaller pronto para uso com os caminhos corretos
+
+Alternativamente, você pode encontrar os caminhos manualmente:
+
+```bash
+# Encontrar o caminho de instalação do rasterio
+python -c "import rasterio; print(rasterio.__file__)"
+
+# Então localizar gdal_data e proj_data relativos a esse caminho
+# Geralmente eles estão no mesmo diretório do __init__.py do rasterio
+```
+
+#### Solução de Problemas
+
+Se você encontrar problemas com o rasterio no executável compilado, consulte o [FAQ do rasterio](https://rasterio.readthedocs.io/en/stable/faq.html) para soluções comuns:
+
+1. **Drivers GDAL ausentes**: Certifique-se de que todos os drivers GDAL necessários estão incluídos
+2. **Problemas com banco de dados PROJ**: Verifique se os dados PROJ estão adequadamente empacotados
+3. **Suporte a formatos de arquivo**: Alguns formatos podem requerer drivers GDAL adicionais
+
+#### Opções Alternativas de Compilação
+
+Para builds de debug ou desenvolvimento, você pode usar:
+
+```bash
+# Build de debug (mostra janela do console)
+pyinstaller --noconfirm --onefile \
+  --add-data "translations:translations" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+
+# Build em diretório (mais rápido para testes)
+pyinstaller --noconfirm --onedir --windowed \
+  --add-data "translations:translations" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Saída
+
+O executável compilado será criado no diretório `dist/`:
+- **Linux**: `dist/main` (arquivo executável)
+- **Windows**: `dist/main.exe` (arquivo executável)
+- **macOS**: `dist/main` (arquivo executável)
+
 ## Conclusão
 
 Este guia fornece as bases para desenvolvimento e contribuição no projeto IGCV Raster Utility. Seguindo estes padrões e práticas, você pode:

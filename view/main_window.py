@@ -5,7 +5,20 @@ from view.band_reorder_window import BandReorderWindow
 from PyQt5.QtCore import Qt, QTranslator, QLocale, QLibraryInfo, QCoreApplication
 from PyQt5.QtGui import QPixmap, QImage, QIcon
 import os
+import sys
 import numpy as np
+
+def resource_path(relative_path):
+    """
+    Função utilitária para obter o caminho absoluto para recursos.
+    Funciona tanto para desenvolvimento quanto para aplicações congeladas.
+    """
+    if getattr(sys, 'frozen', False):
+        # Se o aplicativo está congelado (PyInstaller, cx_Freeze, etc.)
+        return os.path.join(sys._MEIPASS, relative_path)  # type: ignore
+    else:
+        # Se o aplicativo está em desenvolvimento
+        return os.path.join(os.path.abspath('.'), relative_path)
 
 class MainWindow(QMainWindow):
     def __init__(self, controller=None):
@@ -19,7 +32,7 @@ class MainWindow(QMainWindow):
             self.setMinimumSize(800, 600)
             
             # Set application icon
-            icon_path = os.path.join(os.path.dirname(__file__), '..', 'assets', 'icon.png')
+            icon_path = resource_path('assets/icon.png')
             if os.path.exists(icon_path):
                 self.setWindowIcon(QIcon(icon_path))
 
@@ -138,11 +151,10 @@ class MainWindow(QMainWindow):
 
     def _load_language(self, lang_code):
         """Carrega o arquivo de tradução .qm correspondente ao idioma."""
-        translations_dir = os.path.join(os.path.dirname(__file__), '..', 'translations')
         if lang_code == 'pt_BR':
-            qm_file = os.path.join(translations_dir, 'igcv_pt_BR.qm')
+            qm_file = resource_path('translations/igcv_pt_BR.qm')
         elif lang_code == 'en':
-            qm_file = os.path.join(translations_dir, 'igcv_en.qm')
+            qm_file = resource_path('translations/igcv_en.qm')
         else:
             return
         if os.path.exists(qm_file):

@@ -535,6 +535,118 @@ Examples:
 - `docs(api): update function documentation`
 - `test(handler): add unit tests for load_raster`
 
+## Building Executables
+
+### Prerequisites
+
+Before building executables, ensure you have the following installed:
+
+- **PyInstaller**: `pip install pyinstaller`
+- **All project dependencies**: `pip install -r requirements.txt`
+- **GDAL and PROJ data**: These are automatically included with rasterio
+
+### Building for Linux
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations:translations" \
+  --add-data "/home/maysu-lp/Documentos/github/igcv_raster_utility/local/lib/python3.8/site-packages/rasterio/gdal_data:gdal_data" \
+  --add-data "/home/maysu-lp/Documentos/github/igcv_raster_utility/local/lib/python3.8/site-packages/rasterio/proj_data:proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Building for Windows
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations;translations" \
+  --add-data "C:\path\to\your\env\Lib\site-packages\rasterio\gdal_data;gdal_data" \
+  --add-data "C:\path\to\your\env\Lib\site-packages\rasterio\proj_data;proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Building for macOS
+
+```bash
+pyinstaller --noconfirm --onefile --windowed \
+  --add-data "translations:translations" \
+  --add-data "/path/to/your/env/lib/python3.x/site-packages/rasterio/gdal_data:gdal_data" \
+  --add-data "/path/to/your/env/lib/python3.x/site-packages/rasterio/proj_data:proj_data" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Important Notes
+
+#### GDAL and PROJ Data Paths
+
+The paths to `gdal_data` and `proj_data` directories vary depending on your Python environment and operating system. To find the correct paths automatically:
+
+```bash
+# Use the provided utility script
+python utils/find_rasterio_paths.py
+```
+
+This script will:
+- Find your rasterio installation path
+- Locate the GDAL and PROJ data directories
+- Generate a ready-to-use PyInstaller command with the correct paths
+
+Alternatively, you can find the paths manually:
+
+```bash
+# Find rasterio installation path
+python -c "import rasterio; print(rasterio.__file__)"
+
+# Then locate gdal_data and proj_data relative to that path
+# Usually they are in the same directory as rasterio's __init__.py
+```
+
+#### Troubleshooting
+
+If you encounter issues with rasterio in the compiled executable, refer to the [rasterio FAQ](https://rasterio.readthedocs.io/en/stable/faq.html) for common solutions:
+
+1. **Missing GDAL drivers**: Ensure all necessary GDAL drivers are included
+2. **PROJ database issues**: Verify PROJ data is properly bundled
+3. **File format support**: Some formats may require additional GDAL drivers
+
+#### Alternative Build Options
+
+For debugging or development builds, you can use:
+
+```bash
+# Debug build (shows console window)
+pyinstaller --noconfirm --onefile \
+  --add-data "translations:translations" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+
+# Directory build (faster for testing)
+pyinstaller --noconfirm --onedir --windowed \
+  --add-data "translations:translations" \
+  --hidden-import rasterio.sample \
+  --hidden-import rasterio.vrt \
+  --hidden-import rasterio._features \
+  main.py
+```
+
+### Output
+
+The compiled executable will be created in the `dist/` directory:
+- **Linux**: `dist/main` (executable file)
+- **Windows**: `dist/main.exe` (executable file)
+- **macOS**: `dist/main` (executable file)
+
 ## Conclusion
 
 This development guide provides the foundation for contributing to the IGCV Raster Utility project. Following these patterns ensures code quality, maintainability, and consistency across the codebase.

@@ -26,7 +26,7 @@ Se você é um desenvolvedor ou contribuidor, recomendamos:
 - **[Interfaces de Usuário](interface_usuario.md)** - GUI e CLI detalhadas, comparações, usabilidade
 
 ### Desenvolvimento
-- **[Guia de Desenvolvimento](desenvolvimento.md)** - Padrões de código, testes, extensibilidade
+- **[Guia de Desenvolvimento](desenvolvimento.md)** - Padrões de código, testes, extensibilidade, compilação de executáveis
 
 ### Planejamento
 - **[Roadmap de Desenvolvimento](roadmap.md)** - Fases de desenvolvimento, priorizações, cronogramas
@@ -116,6 +116,9 @@ docs/
 - [Repositório Principal](../README.MD)
 - [Issues](https://github.com/your-username/igcv_raster_utility/issues)
 - [Releases](https://github.com/your-username/igcv_raster_utility/releases)
+
+### Compilação Rápida
+Para gerar executáveis, consulte a seção **Compilação de Executáveis** no [Guia de Desenvolvimento](desenvolvimento.md#compilação-de-executáveis) ou use o script utilitário: `python utils/find_rasterio_paths.py`
 
 ## Suporte
 
