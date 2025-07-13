@@ -28,16 +28,10 @@ This tool was designed to support scientific workflows and dataset distribution,
 ## ❌ Missing Features (TODO)
 
 ### Core Functionality
-- [ ] **Spectral indices calculation** (NDVI, EVI, NDRE, etc.)
-- [ ] **Export as RGB/PNG** (quicklook generation)
-- [ ] **Band preview/visualization** (matplotlib integration)
 - [ ] **Advanced band selection** (drag & drop, band reordering)
-- [ ] **Batch processing** for multiple files
-- [ ] **Progress indicators** for long operations
 
 ### User Interface
-- [ ] **Band preview thumbnails** in the selection interface
-- [ ] **File format selection** for export (GeoTIFF, PNG, etc.)
+- [x] **Band preview thumbnails** in the selection interface
 - [ ] **Export options dialog** (compression, quality settings)
 - [ ] **Recent files list** in menu
 - [ ] **Keyboard shortcuts** for common operations
@@ -46,9 +40,7 @@ This tool was designed to support scientific workflows and dataset distribution,
 ### Advanced Features
 - [ ] **Band statistics** display (min, max, mean, std)
 - [ ] **Histogram visualization** for selected bands
-- [ ] **Custom spectral indices** (user-defined formulas)
 - [ ] **Band combination presets** (RGB, false color, etc.)
-- [ ] **Metadata editor** for viewing/editing file metadata
 - [ ] **Coordinate system conversion** options
 
 ### Documentation & Testing
@@ -57,7 +49,6 @@ This tool was designed to support scientific workflows and dataset distribution,
 - [ ] **User manual** with screenshots
 - [ ] **API documentation** for developers
 - [ ] **Example datasets** for testing
-- [ ] **Performance benchmarks**
 
 ## Getting Started
 
@@ -70,30 +61,6 @@ This tool was designed to support scientific workflows and dataset distribution,
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/your-username/igcv_raster_utility.git
-cd igcv_raster_utility
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Compile translations (optional):
-```bash
-python utils/compile_translations.py
-```
-
-4. Run the application:
-```bash
-# GUI mode
-python main.py
-
-# CLI mode
-python main.py --cli --input input.tif --bands 1 2 3 --output output.tif
-```
 
 ## Usage
 
@@ -177,15 +144,11 @@ Most desktop GIS tools are too heavy or too generic for simple scientific or dat
 
 ### Phase 2: Visualization & Indices (Next)
 - [ ] Band preview thumbnails
-- [ ] Spectral indices calculation (NDVI, EVI, NDRE)
-- [ ] RGB/PNG export for quicklooks
+- [ ] RGB/PNG for quicklooks
 - [ ] Basic statistics display
 
 ### Phase 3: Advanced Features (Future)
-- [ ] Custom spectral indices
-- [ ] Batch processing
 - [ ] Advanced export options
-- [ ] Metadata editor
 
 ### Phase 4: Polish & Documentation (Future)
 - [ ] Comprehensive testing
